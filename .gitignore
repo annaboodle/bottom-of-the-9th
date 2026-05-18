@@ -1,0 +1,19 @@
+# Build artifacts
+*.gwc
+*.gwz
+
+# Feedback docs (private)
+wheriflo-feedback*.md
+
+# Session handoff (private)
+SESSION-HANDOFF.md
+
+# MCP config (contains no secrets but not relevant to repo)
+.mcp.json
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
+.codex/
