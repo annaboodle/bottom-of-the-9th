@@ -96,6 +96,11 @@ Relevant wheriflo issues created or updated:
 - `#32` - **Filed 2026-05-27**: builder-ergonomics feature request — surface the `Player.CompletionCode` pattern via three complementary shapes: (1) lint warning when a cartridge sets neither `cart.Complete = true` nor references `Player.CompletionCode`, (2) docs section explaining the canonical pattern + the per-player-per-download nature of codes + the wherigo.com upload-and-redownload testing flow, (3) starter template with a stub `showCompletion()` function. Filed after our cartridge nearly shipped with an `XXX` placeholder in the win MessageBox because the trap is non-obvious.
 - `#33` - **Filed 2026-05-27**: player simulator feature request — map/location list should allow inspecting active location descriptions without teleporting. Real Wherigo lets players tap a location they are not at to see its title/description/distance; wheriflo currently only exposes a **Go Here** teleport action.
 - `#34` - **Filed 2026-05-27**: player simulator bug/feature request — visible inventory items with enabled `ZCommand`s should render action buttons on the item detail screen. Repro: Golden Trident has `itemTrident.Commands = {cmdHoistTrident}` and `cmdHoistTrident.OnClick`, but the simulator item detail only shows name/description and no `Hoist the Golden Trident` button.
+- `#35` - **Filed 2026-05-27**: lint/build should flag `ZCommand.Enabled = true` because it makes official Groundspeak compile fail with HTTP 500 even though local build/validate pass.
+
+Compile finding from 2026-05-27:
+
+- Official Groundspeak compile fails with HTTP 500 if a `ZCommand` sets `Enabled = true`. Commands compile when attached to an item with `Text`, `CmdWith`, `EmptyTargetText`, and `OnClick`; do not set `cmd.Enabled` unless wheriflo/Groundspeak support is confirmed.
 
 Specific observations:
 

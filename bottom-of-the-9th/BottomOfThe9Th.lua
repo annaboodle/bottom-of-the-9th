@@ -511,7 +511,6 @@ cmdHoistTrident = Wherigo.ZCommand()
 cmdHoistTrident.Id = "cmd-hoist-trident"
 cmdHoistTrident.Text = "Hoist the Golden Trident"
 cmdHoistTrident.CmdWith = "Nothing"
-cmdHoistTrident.Enabled = true
 cmdHoistTrident.EmptyTargetText = ""
 cmdHoistTrident.OnClick = function()
     itemTrident.Visible = false
