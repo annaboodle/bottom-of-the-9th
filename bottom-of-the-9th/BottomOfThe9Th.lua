@@ -29,9 +29,7 @@ end
 
 function showChoices(question, choices, inputObj)
     local letters = {"A", "B", "C", "D"}
-    local lines = question .. [[
-
-]]
+    local lines = question
     for i, choice in ipairs(choices) do
         lines = lines .. [[
 
@@ -68,14 +66,37 @@ function pick(tbl)
     return tbl[math.random(#tbl)]
 end
 
+TUNNEL_LAT = 47.65962699180844
+TUNNEL_LON = -122.36127338387956
+CACHE_LAT = 47.6595666667
+CACHE_LON = -122.3614333333
+FINAL_COORDS_TEXT = "N47\194\176 39.574' W122\194\176 21.686'"
+
+fieldCoordinates = {
+    north = {
+        dugout = {47.659844226020226, -122.36171381181205},
+        home = {47.65988569573994, -122.3615683493037},
+        first = {47.659752010965285, -122.3615683493037},
+        second = {47.659761947007595, -122.3613564547926},
+        third = {47.65988253427963, -122.36137187749434},
+    },
+    south = {
+        dugout = {47.65907580159608, -122.36138917775807},
+        home = {47.65912393075513, -122.3616325359694},
+        first = {47.65912430825428, -122.36140438144278},
+        second = {47.65928491886755, -122.36140358124885},
+        third = {47.6592879423046, -122.36163868394715},
+    },
+}
+
 cart = Wherigo.ZCartridge()
 cart.Id = "675e0610-200c-4e0b-863c-9559d3b66969"
 cart.Name = "Bottom of the 9th"
 cart.Description = [[Bottom of the ninth inning. The Mariners just need one run, and you're next up to the plate. Choose your player, set your lineup, and do everything you can to score. Every decision matters: what kind of swing you take, how big a lead you get, whether you steal or stay on base. Can you bring the Mariners home?]]
 cart.Visible = true
 cart.Activity = "WherigoGame"
-cart.StartingLocation = ZonePoint(47.656560441380556, -122.3490725981045, 0)
-cart.StartingLocationDescription = [[A baseball diamond. Head to the dugout area behind home plate to begin.]]
+cart.StartingLocation = ZonePoint(47.65962699180844, -122.36127338387956, 0)
+cart.StartingLocationDescription = [[A park with two baseball diamonds. Head to the alley between the fields to begin.]]
 cart.Version = "1.0"
 cart.Author = "-Bigfoot-"
 cart.Company = ""
@@ -105,42 +126,49 @@ playerDB = {
         power = 4, contact = 5, bunting = 2, speed = 2, iq = 5,
         style = "patient",
         desc = "They named the designated hitter award after him. That tells you everything. Edgar waits, he watches, and when the right pitch comes, he drives it down the left field line.",
+        selectionIntro = "Edgar is the hitter you want when every pitch matters. He will wait out the pitcher, punish a mistake, and give the Mariners exactly the kind of professional at-bat this moment needs.",
         short = "Edgar",
     },
     ["Ken Griffey Jr"] = {
         power = 5, contact = 4, bunting = 2, speed = 4, iq = 4,
         style = "aggressive_skilled",
         desc = "The Kid. Backwards cap, sweetest swing in baseball history, and robs home runs by climbing walls. Nobody has ever made the game look this easy.",
+        selectionIntro = "Junior brings power, speed, and the calm of someone who's lived in the spotlight since he was a kid. One good pitch, one perfect swing, and the whole stadium will know it instantly.",
         short = "Griffey",
     },
     ["Ichiro Suzuki"] = {
         power = 2, contact = 5, bunting = 5, speed = 5, iq = 5,
         style = "contact_speed",
-        desc = "A hitting machine with a laser cannon arm. Ichiro points his bat at the pitcher like an archer drawing a bow, places the ball perfectly, and before you react, he is on base.",
+        desc = "A hitting machine with a laser cannon arm. Ichiro points his bat at the pitcher like an archer drawing a bow, places the ball perfectly, and before you react, he's on base.",
+        selectionIntro = "Ichiro gives you options. He can slap a hit through the infield, beat out a grounder, drop a bunt, or turn one gap into two bases before the defense can reset.",
         short = "Ichiro",
     },
     ["Julio Rodriguez"] = {
         power = 5, contact = 3, bunting = 2, speed = 5, iq = 3,
         style = "dynamic",
         desc = "J-Rod. Young, electric, and absolutely fearless. Gold chain bouncing, bat flips for days, and the biggest smile in the dugout. He grabs the trident after every homer like he was born to carry it.",
+        selectionIntro = "Julio brings pressure before the pitcher even throws. If he reaches base, his speed changes the defense; if he gets a pitch to drive, the ballpark is ready to explode.",
         short = "J-Rod",
     },
     ["Cal Raleigh"] = {
         power = 5, contact = 2, bunting = 1, speed = 3, iq = 4,
         style = "power_first",
         desc = "Big Dumper is here to do damage. When Cal gets hold of one, the ball disappears. Sixty homers in a season as a switch-hitting catcher. Let that sink in.",
+        selectionIntro = "Cal gives you the biggest swing in the lineup. The pitcher can't relax for a single pitch, because one mistake to Big Dumper can end the game.",
         short = "Cal",
     },
     ["Josh Naylor"] = {
         power = 4, contact = 4, bunting = 2, speed = 2, iq = 5,
         style = "run_producer",
         desc = "Naylz. The very definition of baseball IQ. A base-stealing, bubblegum-chomping, cool-as-a-cucumber gamer. Pitchers tense up when his custom Jordan cleats dig into the box.",
+        selectionIntro = "Naylor is built for the messy parts of a rally. He sees the situation, works the count, moves runners, and finds ways to turn a small opening into a real chance.",
         short = "Naylor",
     },
     ["Randy Arozarena"] = {
         power = 4, contact = 3, bunting = 2, speed = 5, iq = 4,
         style = "chaos",
-        desc = "Randy crossed the ocean on a raft to play this game. Now he holds the postseason home run record and plays every at-bat like it's his last. Pure chaos, pure heart.",
+        desc = "Randy escaped Cuba on a small boat to chase this game and build a better life for his family. Now he holds the postseason home run record and plays every at-bat like it's his last. Pure chaos, pure heart.",
+        selectionIntro = "Randy is dangerous because he can beat you in more than one way. He can drive the ball, steal a base, force a rushed throw, or simply make the defense uncomfortable.",
         short = "Randy",
     },
 }
@@ -173,7 +201,7 @@ triviaQuestions = {
     },
     {
         q = "What is the nickname commonly associated with Cal Raleigh?",
-        choices = {"The Big Unit", "The Kid", "Big Dumper", "King Felix"},
+        choices = {"The Big Unit", "The Kid", "Big Dumper", "California Raleigh"},
         answer = "Big Dumper",
     },
     {
@@ -243,6 +271,8 @@ batterIndex = 0
 balls = 0
 strikes = 0
 pitchNumber = 0
+hasSeenSwingTutorial = false
+hasSeenLeadTutorial = false
 
 runnerPower = 0
 runnerContact = 0
@@ -269,12 +299,12 @@ runnerPlay = "stay"
 needNewBatter = true
 consecutiveBigLeads = 0
 
-timedRunActive = false
-timedRunDifficulty = 0
+runnerInTransit = false
 bigHitInProgress = false
 advanceReason = ""
 extraBasesToRun = 0
 stealResult = ""
+stealFromBase = ""
 squeezeResult = ""
 runnerOnFirst = false
 runnerOnSecond = false
@@ -284,6 +314,19 @@ triviaQuestionsSeen = {}
 
 mooseMagicActive = false
 pineTarActive = false
+selectedField = ""
+
+zoneTunnel = Wherigo.Zone(cart)
+zoneTunnel.Id = "zone-tunnel"
+zoneTunnel.Name = "The Alley"
+zoneTunnel.Description = "The alley between two ballparks. Head there to choose your stadium."
+zoneTunnel.Visible = false
+zoneTunnel.Active = false
+zoneTunnel.OriginalPoint = ZonePoint(47.65962699180844, -122.36127338387956, 0)
+zoneTunnel.Points = makeZonePoints(47.65962699180844, -122.36127338387956, 4)
+zoneTunnel.DistanceRange = Distance(-1, "feet")
+zoneTunnel.ProximityRange = Distance(30, "meters")
+zoneTunnel.ShowObjects = "OnEnter"
 
 zoneDugout = Wherigo.Zone(cart)
 zoneDugout.Id = "zone-dugout"
@@ -312,7 +355,7 @@ zoneHomePlate.ShowObjects = "OnEnter"
 zoneFirstBase = Wherigo.Zone(cart)
 zoneFirstBase.Id = "zone-first"
 zoneFirstBase.Name = "First Base"
-zoneFirstBase.Description = "The bag under your foot. The first baseman breathing next to you. Now think about second."
+zoneFirstBase.Description = "First base is waiting down the line. Get there clean, beat the throw, and turn this rally into something real."
 zoneFirstBase.Visible = false
 zoneFirstBase.Active = false
 zoneFirstBase.OriginalPoint = ZonePoint(47.656503, -122.349055, 0)
@@ -324,7 +367,7 @@ zoneFirstBase.ShowObjects = "OnEnter"
 zoneSecondBase = Wherigo.Zone(cart)
 zoneSecondBase.Id = "zone-second"
 zoneSecondBase.Name = "Second Base"
-zoneSecondBase.Description = "Scoring position. The outfield stretches in front of you. One clean hit and you could be heading home."
+zoneSecondBase.Description = "Second base is out there in scoring position. Reach it, and one clean hit could send you home."
 zoneSecondBase.Visible = false
 zoneSecondBase.Active = false
 zoneSecondBase.OriginalPoint = ZonePoint(47.656342, -122.349053, 0)
@@ -336,7 +379,7 @@ zoneSecondBase.ShowObjects = "OnEnter"
 zoneThirdBase = Wherigo.Zone(cart)
 zoneThirdBase.Id = "zone-third"
 zoneThirdBase.Name = "Third Base"
-zoneThirdBase.Description = "Ninety feet from glory. You can see home plate from here. The crowd knows what's about to happen."
+zoneThirdBase.Description = "Third base is ninety feet from glory. Get there, and the whole ballpark will know what comes next."
 zoneThirdBase.Visible = false
 zoneThirdBase.Active = false
 zoneThirdBase.OriginalPoint = ZonePoint(47.656344, -122.348810, 0)
@@ -347,15 +390,73 @@ zoneThirdBase.ShowObjects = "OnEnter"
 
 zoneCache = Wherigo.Zone(cart) -- wheriflo:ignore
 zoneCache.Id = "zone-cache"
-zoneCache.Name = "The Cache"
-zoneCache.Description = "The final destination. Humpy's coordinates led you here."
+zoneCache.Name = "Victory Hall / Final Cache"
+zoneCache.Description = "Where the Mariners gather after a walk-off win. Humpy's coordinates led you here. The boys are waiting."
 zoneCache.Visible = false
 zoneCache.Active = false
-zoneCache.OriginalPoint = ZonePoint(47.65657633763536, -122.3486991878533, 0)
-zoneCache.Points = makeZonePoints(47.65657633763536, -122.3486991878533, 4)
+zoneCache.OriginalPoint = ZonePoint(47.6595666667, -122.3614333333, 0)
+zoneCache.Points = makeZonePoints(47.6595666667, -122.3614333333, 4)
 zoneCache.DistanceRange = Distance(-1, "feet")
 zoneCache.ProximityRange = Distance(30, "meters")
 zoneCache.ShowObjects = "OnEnter"
+
+function setZoneCoordinates(zone, coords)
+    zone.OriginalPoint = ZonePoint(coords[1], coords[2], 0)
+    zone.Points = makeZonePoints(coords[1], coords[2], 4)
+end
+
+function setFieldCoordinates(field)
+    local coords = fieldCoordinates[field]
+    if not coords then return end
+    setZoneCoordinates(zoneDugout, coords.dugout)
+    setZoneCoordinates(zoneHomePlate, coords.home)
+    setZoneCoordinates(zoneFirstBase, coords.first)
+    setZoneCoordinates(zoneSecondBase, coords.second)
+    setZoneCoordinates(zoneThirdBase, coords.third)
+end
+
+function isPlayerInsideZone(zone)
+    if not zone or not zone.Contains then return false end
+
+    local ok, result = pcall(function()
+        return zone:Contains(Player)
+    end)
+    if ok and result then return true end
+
+    if Player and Player.ObjectLocation then
+        ok, result = pcall(function()
+            return zone:Contains(Player.ObjectLocation)
+        end)
+        if ok and result then return true end
+    end
+
+    return false
+end
+
+function activateZone(zone)
+    zone.Active = true
+    zone.Visible = true
+end
+
+function activateZoneOrEnterIfInside(zone)
+    if isPlayerInsideZone(zone) and zone.OnEnter then
+        zone.Active = false
+        zone.Visible = false
+        zone.OnEnter()
+    else
+        activateZone(zone)
+    end
+end
+
+function getSkipperName()
+    if selectedField == "north" then return "Lou Piniella" end
+    return "Dan Wilson"
+end
+
+function getSkipperFirstName()
+    if selectedField == "north" then return "Lou" end
+    return "Dan"
+end
 
 itemRallyCap = Wherigo.ZItem(cart)
 itemRallyCap.Id = "item-rallycap"
@@ -388,16 +489,62 @@ itemMooseMagic.Commands = {}
 itemBubblegumWrapper = Wherigo.ZItem(cart)
 itemBubblegumWrapper.Id = "item-wrapper"
 itemBubblegumWrapper.Name = "Bubblegum Wrapper"
-itemBubblegumWrapper.Description = "A flattened bubblegum wrapper from Humpy. Tiny numbers are scrawled on the inside: FINAL COORDS"
+itemBubblegumWrapper.Description = [[A flattened bubblegum wrapper from Humpy. Tiny numbers are scrawled on the inside:
+]] .. FINAL_COORDS_TEXT .. [[
+
+Wherever they lead, that's where the boys will be. Maybe the cache, too...]]
 itemBubblegumWrapper.Visible = false
 itemBubblegumWrapper.Commands = {}
 
 itemCartridgeCode = Wherigo.ZItem(cart)
 itemCartridgeCode.Id = "item-code"
 itemCartridgeCode.Name = "Game-Winning Ball"
-itemCartridgeCode.Description = "The game-winning ball from your walk-off hit. A cartridge code is carefully printed under the stitching: XXX"
+itemCartridgeCode.Description = "The game-winning ball from your walk-off hit. The cartridge code is carefully printed under the stitching."
 itemCartridgeCode.Visible = false
 itemCartridgeCode.Commands = {}
+
+-- Golden Trident: end-of-night affordance. Player taps this in their inventory to start
+-- a new game on their own terms instead of relying on a perpetually-active dugout zone.
+-- Granted on the "Call it a night" win branch, consumed on hoist (Visible = false),
+-- re-granted on the next qualifying win. Same lifecycle as Moose Magic / Pine Tar.
+cmdHoistTrident = Wherigo.ZCommand()
+cmdHoistTrident.Id = "cmd-hoist-trident"
+cmdHoistTrident.Text = "Hoist the Golden Trident"
+cmdHoistTrident.CmdWith = "Nothing"
+cmdHoistTrident.Enabled = true
+cmdHoistTrident.EmptyTargetText = ""
+cmdHoistTrident.OnClick = function()
+    itemTrident.Visible = false
+    Wherigo.MessageBox{
+        Text = [[You hoist the Golden Trident high. The dugout lights flicker on. The scoreboard resets.
+
+Time to do this again.]],
+        Callback = function() Wherigo.GetInput(inputHoistChoice) end,
+    }
+end
+
+itemTrident = Wherigo.ZItem(cart)
+itemTrident.Id = "item-trident"
+itemTrident.Name = "Golden Trident"
+itemTrident.Description = "The Mariners' golden trident, raised in the dugout after every home win. Hoist it any time to start a new game."
+itemTrident.Visible = false
+itemTrident.Commands = {cmdHoistTrident}
+
+inputHoistChoice = Wherigo.ZInput(cart)
+inputHoistChoice.Id = "input-hoist-choice"
+inputHoistChoice.InputType = "MultipleChoice"
+inputHoistChoice.Text = "Same diamond or switch parks?"
+inputHoistChoice.Choices = {"Run it back", "Switch ballparks"}
+inputHoistChoice.OnGetInput = function(input, answer)
+    if answer == "Switch ballparks" then
+        local newField = (selectedField == "north") and "south" or "north"
+        selectedField = newField
+        setFieldCoordinates(newField)
+    end
+    restartNewPlayer([[The lineup card is back on the wall. Bottom of the 9th, one more time.
+
+Head to the dugout.]])
+end
 
 inputSelectPlayer = Wherigo.ZInput(cart)
 inputSelectPlayer.Id = "input-select-player"
@@ -406,7 +553,6 @@ do
     local text = [[Choose your Mariner:]]
     for _, name in ipairs(playerNames) do
         text = text .. [[
-
 
 ]] .. name .. " -- " .. playerDB[name].desc
     end
@@ -467,8 +613,41 @@ inputRestart.Choices = {
 inputWinChoice = Wherigo.ZInput(cart)
 inputWinChoice.Id = "input-win-choice"
 inputWinChoice.InputType = "MultipleChoice"
-inputWinChoice.Text = "What now? Meet the boys at Victory Hall, or run it back?"
-inputWinChoice.Choices = {"Play again", "End game"}
+inputWinChoice.Text = [[What now? Down for another game, or ready to meet the boys at Victory Hall?
+
+If you call it a night, you'll find the golden trident in your bag. Hoist it any time to play again.]]
+inputWinChoice.Choices = {"Run it back", "Switch ballparks", "Call it a night"}
+
+inputFieldSelect = Wherigo.ZInput(cart)
+inputFieldSelect.Id = "input-field-select"
+inputFieldSelect.InputType = "MultipleChoice"
+inputFieldSelect.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
+
+A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.
+
+"Quick call, kid," he says, slathering cream cheese on a bun. "North diamond is the Kingdome, '95 ALDS energy. South diamond is T-Mobile Park, summer of right now. Where do you want to write your legend?"
+
+Which ballpark are you headed to?]]
+inputFieldSelect.Choices = {"Kingdome (north field)", "T-Mobile Park (south field)"}
+inputFieldSelect.OnGetInput = function(input, answer)
+    local field = "south"
+    local ack = [[The man grins in approval. "T-Mobile Park. Real grass, retractable roof open wide, summer sky going pink. Get to the dugout -- let's give Seattle something to remember."]]
+
+    if answer == "Kingdome (north field)" then
+        field = "north"
+        ack = [[The man grins and winks. "The Kingdome. Concrete echoing, fluorescent lights humming, Junior somewhere in the lineup card. Get to the dugout -- make some noise under that big gray roof."]]
+    end
+
+    selectedField = field
+    setFieldCoordinates(field)
+    zoneTunnel.Active = false
+    zoneTunnel.Visible = false
+
+    Wherigo.MessageBox{
+        Text = ack,
+        Callback = function() activateZoneOrEnterIfInside(zoneDugout) end,
+    }
+end
 
 function loadRunnerStats(name)
     local p = playerDB[name]
@@ -572,30 +751,47 @@ function showSwingPrompt()
             "The pitcher peers in for the sign. You settle your weight, tap the plate, and lock in.",
             "The stadium goes quiet for just a second. Then the pitcher comes set and you dig in.",
             "You step into the box. The pitcher rolls the ball in his glove, staring you down. You stare right back.",
+            "You take a deep breath, eyes on the pitcher. Let's see what he's got.",
+            "The catcher gets into his stance. You waggle the bat once and lock in.",
+            "First pitch of the at-bat. You're calm. You're ready. You dig in.",
         })
     elseif balls == 3 and strikes == 2 then
         situationText = pick({
             "Full count. The crowd is on its feet. Everything comes down to this pitch.",
             "Full count. The stadium is electric. Nobody is sitting down.",
             "3-2. The pitcher wipes his brow. This is it.",
+            "Full count. One pitch. One swing. Make it count.",
+            "3-2. The whole season is balanced on a single pitch. Stay calm.",
+            "Full count. You take a slow breath. The pitcher takes his.",
         })
     elseif strikes == 2 then
         situationText = pick({
             "Two strikes. You choke up and protect the plate.",
             "Two strikes. You shorten your swing and focus on making contact.",
             "Two strikes. The crowd is getting nervous. You dig in deeper.",
+            "Two strikes. You promise yourself you won't go down looking.",
+            "Two strikes. Anything close, you're swinging.",
+            "Two strikes. You set your stance a little wider, ready to fight off whatever he throws.",
+            "Two strikes. You stare at the pitcher and refuse to blink.",
         })
     elseif balls == 3 then
         situationText = pick({
             "Three balls. The pitcher has to come to you.",
             "Three balls. The pitcher is rattled. He can't afford another miss.",
             "Three balls. The catcher sets up right down the middle. The pitcher has no choice.",
+            "Three balls. The pitcher needs a strike. You're sitting on a fastball.",
+            "Three balls. You can practically see the panic in the pitcher's eyes.",
+            "Three balls. He's painted himself into a corner. You've got the leverage.",
         })
     elseif balls > strikes then
         situationText = pick({
             "You're ahead in the count. The pitcher needs a strike.",
             "Hitter's count. The pitcher has to come to you. Pick your spot.",
             "You're sitting pretty in the count. The advantage is yours.",
+            "Hitter's count. You wait for your pitch.",
+            "You're in the driver's seat. Don't swing at anything you can't crush.",
+            "The count is in your favor. Be patient. The right pitch will come.",
+            "Hitter's count. The pitcher knows you can sit on a fastball. He's nervous.",
         })
     else
         situationText = pick({
@@ -603,15 +799,31 @@ function showSwingPrompt()
             "The pitcher rolls the ball in his glove. He comes set.",
             "The catcher puts down a sign. The pitcher nods and winds up.",
             "The pitcher takes a breath, comes set, and stares in.",
+            "The pitcher checks his grip on the ball. He's ready.",
+            "You watch the pitcher's eyes for any tell. Nothing.",
+            "The catcher pounds his glove twice. The pitcher comes set.",
+            "The pitcher rocks back, ready to deliver.",
         })
     end
-    inputSwing.Text = countText .. [[
+    local tutorialText = ""
+    if not hasSeenSwingTutorial then
+        hasSeenSwingTutorial = true
+        tutorialText = [[
 
+Contact swing: safest way to put the ball in play. Best for contact hitters and keeping the rally moving.
+
+Power swing: bigger chance for extra bases or a game-changing hit, but you're more likely to swing and miss.
+
+Bunt for a hit: use speed and surprise. Best for fast players, but risky if the defense reacts quickly.
+
+Take a pitch: be patient and see if the pitcher misses. Good for working the count, but taking too many strikes can end the at-bat.]]
+    end
+
+    inputSwing.Text = countText .. [[
 
 ]] .. situationText .. [[
 
-
-What is your approach?]]
+What is your approach?]] .. tutorialText
     Wherigo.GetInput(inputSwing)
 end
 
@@ -667,13 +879,18 @@ function resolveHomePlateTake()
                 Text = [[Ball four. You toss the bat aside and trot toward first. The crowd cheers -- a free pass, and the winning run is aboard.
 
 Run to first base!]],
-                Callback = function() advanceReason = "walk" beginTimedRun("first") end,
+                Callback = function() advanceReason = "walk" beginRunToBase("first") end,
             }
         else
             local msg = pick({
                 "Ball " .. balls .. ". You watched it all the way. That one was never going to catch the corner.",
                 "Ball " .. balls .. ". The pitch drifts outside and you don't chase. Good eye.",
                 "Ball " .. balls .. ". Low and away. You hold your ground and let it go.",
+                "Ball " .. balls .. ". High and tight. You lean back and let it sail by.",
+                "Ball " .. balls .. ". The pitch bounces in the dirt. The catcher scoops it up. You don't even flinch.",
+                "Ball " .. balls .. ". It tails away from the plate at the last second. You don't bite.",
+                "Ball " .. balls .. ". The pitcher misses badly. The catcher has to reach to snag it.",
+                "Ball " .. balls .. ". The pitcher's command is shaky. You can see him getting frustrated.",
             })
             Wherigo.MessageBox{
                 Text = msg,
@@ -689,6 +906,11 @@ Run to first base!]],
                 "Strike " .. strikes .. " called. The pitch paints the outside corner. You thought it was off the plate, but the umpire disagrees.",
                 "Strike " .. strikes .. ". The pitcher sneaks a fastball on the inside edge and the umpire calls it. You shake your head.",
                 "Strike " .. strikes .. " called. That one caught more of the plate than you expected.",
+                "Strike " .. strikes .. " called. The pitch catches the bottom of the zone. You frown and step out.",
+                "Strike " .. strikes .. ". A nasty breaking ball drops in for a strike. You couldn't have hit that.",
+                "Strike " .. strikes .. " called. The pitcher threads a fastball right where you weren't expecting it.",
+                "Strike " .. strikes .. ". The umpire rings it up. You glance at the catcher's glove -- that was borderline.",
+                "Strike " .. strikes .. " called. It clips the outside corner. You stare at the umpire for a beat, then refocus.",
             })
             Wherigo.MessageBox{
                 Text = msg,
@@ -696,6 +918,53 @@ Run to first base!]],
             }
         end
     end
+end
+
+function getContactFoulText()
+    return pick({
+        "You swing and chop it foul into the dirt. Strike " .. strikes .. ".",
+        "You reach for an outside pitch and nick it foul off the end of the bat. Strike " .. strikes .. ".",
+        "You get just enough of it to foul it back to the screen. Strike " .. strikes .. ".",
+        "You square it up but pull it foul down the first base line. Strike " .. strikes .. ".",
+    })
+end
+
+function getContactOutText()
+    return pick({
+        "You make contact, but it's a soft roller to the shortstop. He fields it cleanly and throws you out by three steps.",
+        "You put the ball on the ground, but it goes right at the second baseman. A routine play. You're out at first.",
+        "You top the ball weakly to the pitcher. He scoops it and flips to first. An easy out.",
+        "You ground it hard but right at the third baseman. He catches it on a hop and fires across for the out.",
+        "You hit a sharp grounder up the middle, but the shortstop is there. He gloves it and throws you out by a step.",
+    })
+end
+
+function getPowerMissText()
+    return pick({
+        "You load up and swing hard, but the pitch is in on your hands. You miss. Strike " .. strikes .. ".",
+        "A big cut, but the ball dips under your bat. You fan on it. Strike " .. strikes .. ".",
+        "You take a massive cut at a breaking ball that disappears at the last second. Strike " .. strikes .. ".",
+        "You swing through a fastball that had more giddyup than you expected. Strike " .. strikes .. ".",
+    })
+end
+
+function getPowerOutText()
+    return pick({
+        "You swing for the fences but get under it. A towering pop-up to the infield. The second baseman drifts over and squeezes it. Out.",
+        "You unload, but catch the top of the ball. A weak grounder that dies in front of the mound. The pitcher jogs over, picks it up, and tosses to first.",
+        "A huge swing, but you hit it straight up. The catcher throws off his mask, circles under it, and makes the catch.",
+        "You get all of it, but a half-second too late. A long, lazy fly ball that the right fielder camps under. Out.",
+        "You launch a deep drive to left -- but the left fielder makes the catch at the warning track. So close.",
+    })
+end
+
+function getBuntOutText()
+    return pick({
+        "You square around to bunt, but the ball pops straight up off the bat. The catcher springs out from behind the plate and catches it before it hits the ground.",
+        "You try to lay one down, but push it too hard. The ball rolls right to the charging third baseman, who throws you out by ten feet.",
+        "You square to bunt but the pitch jams you. The ball trickles right back to the pitcher, who guns you down at first.",
+        "Your bunt goes too soft. The catcher pounces and fires to first. The throw beats you by two steps. Out.",
+    })
 end
 
 function handleSwingFailure(approach)
@@ -708,18 +977,11 @@ function handleSwingFailure(approach)
                 return
             end
             Wherigo.MessageBox{
-                Text = pick({
-                    "You swing and chop it foul into the dirt. Strike " .. strikes .. ".",
-                    "You reach for an outside pitch and nick it foul off the end of the bat. Strike " .. strikes .. ".",
-                }),
+                Text = getContactFoulText(),
                 Callback = function() showSwingPrompt() end,
             }
         else
-            handleRunnerOut(pick({
-                "You make contact, but it's a soft roller to the shortstop. He fields it cleanly and throws you out by three steps.",
-                "You put the ball on the ground, but it goes right at the second baseman. A routine play. You're out at first.",
-                "You top the ball weakly to the pitcher. He scoops it and flips to first. An easy out.",
-            }))
+            handleRunnerOut(getContactOutText())
         end
     elseif approach == "Power swing" then
         local r = math.random(2)
@@ -730,24 +992,14 @@ function handleSwingFailure(approach)
                 return
             end
             Wherigo.MessageBox{
-                Text = pick({
-                    "You load up and swing hard, but the pitch is in on your hands. You miss. Strike " .. strikes .. ".",
-                    "A big cut, but the ball dips under your bat. You fan on it. Strike " .. strikes .. ".",
-                }),
+                Text = getPowerMissText(),
                 Callback = function() showSwingPrompt() end,
             }
         else
-            handleRunnerOut(pick({
-                "You swing for the fences but get under it. A towering pop-up to the infield. The second baseman drifts over and squeezes it. Out.",
-                "You unload, but catch the top of the ball. A weak grounder that dies in front of the mound. The pitcher jogs over, picks it up, and tosses to first.",
-                "A huge swing, but you hit it straight up. The catcher throws off his mask, circles under it, and makes the catch.",
-            }))
+            handleRunnerOut(getPowerOutText())
         end
     else
-        handleRunnerOut(pick({
-            "You square around to bunt, but the ball pops straight up off the bat. The catcher springs out from behind the plate and catches it before it hits the ground.",
-            "You try to lay one down, but push it too hard. The ball rolls right to the charging third baseman, who throws you out by ten feet.",
-        }))
+        handleRunnerOut(getBuntOutText())
     end
 end
 
@@ -777,7 +1029,6 @@ function handleSwingPartial(approach)
     end
     msg = msg .. [[
 
-
 Count: ]] .. balls .. "-" .. strikes
     Wherigo.MessageBox{
         Text = msg,
@@ -789,29 +1040,34 @@ function handleSwingHit(approach, dest)
     local msg = ""
     if approach == "Contact swing" then
         msg = pick({
-            "You put a smooth swing on it and punch a clean single into right field! The outfielder fields it on a hop as you fly towards first base.",
-            "You line a sharp single up the middle! The ball scoots through the infield and into center field. You're on!",
-            "You slap the ball the other way, past the diving first baseman and into right field! A textbook opposite-field single!",
+            "You put a smooth swing on it and punch the ball into right field! The outfielder is breaking on it as you sprint toward first.",
+            "You line a sharp one up the middle! The ball scoots through the infield as you bolt down the line.",
+            "You slap the ball the other way, past the diving first baseman and into right field! You're off the bag, churning toward first!",
+            "You poke the ball between short and third! It rolls into left field as you bolt down the line!",
+            "You guide a perfect line drive over the second baseman's head! The right fielder corrals it as you sprint down the line.",
         })
     elseif approach == "Power swing" then
         msg = pick({
-            "You drive the ball hard into the left-center gap! It hits the grass and rolls as you charge toward first. Base hit!",
+            "You drive the ball hard into the left-center gap! It hits the grass and rolls as you charge toward first!",
             "You turn on a fastball and rip a line drive into left field! The outfielder cuts it off as you bear down on first base.",
-            "You muscle an inside pitch into right field. It hangs up just long enough for you to leg it out. Get moving!",
+            "You muscle an inside pitch into right field. The ball hangs up there. You take off down the line!",
+            "You smoke a line drive into the right-center gap! The outfielders converge as you bolt for first!",
+            "You barrel a fastball into deep left! The crowd rises. You take off, no time to admire it!",
         })
     else
         msg = pick({
             "You square and lay down a perfect bunt along the third base line! The ball hugs the chalk and dies in the grass. You fly down the line, racing the throw.",
             "You push a beautiful bunt toward the right side. The pitcher and first baseman both hesitate. You take off, a blur in a blue jersey!",
+            "You drop a perfect drag bunt down the third base line! The third baseman charges. You're already flying down the line!",
+            "You lay down a beauty toward second base. The pitcher slips off the mound, scrambling for the ball. You're off and running!",
         })
     end
     msg = msg .. [[
 
-
 RUN TO FIRST!]]
     Wherigo.MessageBox{
         Text = msg,
-        Callback = function() advanceReason = "hit" beginTimedRun("first") end,
+        Callback = function() advanceReason = "hit" beginRunToBase("first") end,
     }
 end
 
@@ -819,7 +1075,7 @@ function handleSwingBigHit(approach)
     bigHitInProgress = true
     local msg = ""
     if approach == "Bunt for a hit" then
-        msg = [[You drop a perfect drag bunt toward the right side! The ball rolls just inside the line, dying on the grass. The pitcher scrambles off the mound but he's got no play! You're flying down the line!
+        msg = [[You drop a perfect drag bunt toward the right side! The ball rolls just inside the line, dying on the grass. The pitcher scrambles off the mound. You're flying down the line!
 
 RUN TO FIRST!]]
     elseif approach == "Contact swing" then
@@ -833,7 +1089,7 @@ RUN TO FIRST!]]
     end
     Wherigo.MessageBox{
         Text = msg,
-        Callback = function() advanceReason = "big_hit" beginTimedRun("first") end,
+        Callback = function() advanceReason = "big_hit" beginRunToBase("first") end,
     }
 end
 -- ON-BASE PITCH LOOP
@@ -861,7 +1117,7 @@ function startBaseLoop()
             aggressive_skilled = pick({
                 short .. " strides to the plate with that unmistakable confidence. The crowd buzzes -- they know what his bat can do.",
                 short .. " rolls his shoulders, takes one easy practice swing, and steps in. The swing is so smooth it looks like slow motion. The pitcher swallows hard.",
-                "The Kid steps into the box and the whole stadium leans forward. That stance. That bat waggle. Everyone knows what is coming.",
+                "The Kid steps into the box and the whole stadium leans forward. That stance. That bat waggle. Everyone knows what's coming.",
             }),
             contact_speed = pick({
                 short .. " takes a few quick practice swings, light and precise. Every movement is efficient. Every motion has purpose.",
@@ -897,9 +1153,16 @@ function startBaseLoop()
                 "You catch your breath and look toward home.",
                 "You clap your hands once, then turn your eyes to the plate.",
                 "From here, you've got a perfect view of home plate.",
+                "You plant a foot on the bag and lock in on the pitcher.",
+                "You take a slow breath and watch the next at-bat unfold.",
+                "You dust your hands together and glance toward the batter's box.",
+                "You lean forward, ready to break the second the ball leaves the bat.",
+                "You look in toward the plate, trying to read the pitcher's rhythm.",
+                "You settle in, one eye on the pitcher and one eye on the fielders.",
+                "You bounce on your toes, waiting for the next pitch.",
+                "You steal a quick look at the defense, then turn back toward home.",
             })
             intro = transition .. [[
-
 
 ]] .. batterIntro
         else
@@ -971,8 +1234,8 @@ end
 
 function offerScoutingReport()
     inputUseItem.Text = pick({
-        "You have the Scouting Report folded in your back pocket. Pull it out and read the intel before this pitch?",
-        "Dan's scouting report is in your pocket. Is now the right time to reference it?",
+        "You've got the Scouting Report folded in your back pocket. Pull it out and read the intel before this pitch?",
+        "The scouting report is burning a hole in your back pocket. Is now the right time to reference it?",
         "You can feel the folded paper in your back pocket -- the Scouting Report. Check the notes on this situation?",
     })
     inputUseItem.OnGetInput = function(input, answer)
@@ -1038,7 +1301,7 @@ A squeeze bunt could catch the defense flat-footed.]]
         else
             return [[You unfold the scouting report and scan the pitcher's tendencies:
 
-"Gets quick with runners in scoring position. Rushes his delivery and leaves fastballs up in the zone. Hittable when he is nervous."
+"Gets quick with runners in scoring position. Rushes his delivery and leaves fastballs up in the zone. Hittable when he's nervous."
 
 Your hitter should sit on the fastball and let him make a mistake.]]
         end
@@ -1063,24 +1326,34 @@ Runners: ]] .. runnersText
     elseif currentBase == "second" then baseLabel = "SECOND"
     else baseLabel = "THIRD" end
 
+    local short = getShortName(currentBatter)
     local situationFlavor = ""
     if outs == 2 then
         situationFlavor = pick({
             "Two outs. No margin for error.",
             "Two outs. Everything rides on this at-bat.",
             "Two down. The whole stadium is holding its breath.",
+            "Two outs. One mistake and the season ends.",
+            "Two away. The Mariners are running out of chances.",
+            "Two outs. The dugout is on its feet.",
         })
     elseif currentBase == "third" and outs < 2 then
         situationFlavor = pick({
             "Ninety feet away. The crowd is standing.",
             "You can see home plate from here. So close.",
             "Ninety feet. The crowd is deafening.",
+            "Ninety feet from the walk-off. The stadium is on its feet.",
+            "The third base coach is shouting in your ear. Stay sharp.",
+            "You're so close you can almost taste the win.",
         })
     elseif strikes == 2 then
         situationFlavor = pick({
-            "Two strikes on the batter. The tension builds.",
-            "The batter is in a hole with two strikes. Protect the plate.",
+            "Two strikes on " .. short .. ". The tension builds.",
+            short .. " is in a hole with two strikes. Protect the plate.",
             "Two strikes. The at-bat is on a knife's edge.",
+            "Two strikes. One more and the at-bat is over.",
+            "Two strikes. " .. short .. " has to swing at anything close.",
+            "Two strikes. The crowd holds its breath.",
         })
     else
         situationFlavor = pick({
@@ -1088,32 +1361,57 @@ Runners: ]] .. runnersText
             "The pitcher glances your way, then turns back to the plate.",
             "The pitcher peers in for the sign. The catcher sets up.",
             "The pitcher takes a deep breath and comes set.",
+            "The catcher gives a sign. The pitcher nods.",
+            "The pitcher rolls the ball in his glove.",
+            "The infielders crouch into position, ready to react.",
+            "The pitcher wipes sweat from his brow.",
+            "The catcher pounds his glove twice and sets up.",
+            "Stadium lights blaze down on the diamond.",
+            "The pitcher shakes off a sign, then nods at the next one.",
+            "The pitcher tugs at his cap, then comes set.",
+            "Cleats scrape against the dirt as the infielders set.",
+            "Dust drifts across the infield in the stadium lights.",
+            "The umpire crouches into position behind the catcher.",
         })
     end
 
-    local short = getShortName(currentBatter)
     local batterFlavor = pick({
         currentBatter .. " is at the plate.",
         currentBatter .. " is in the box, digging in.",
         currentBatter .. " is up, staring down the pitcher.",
         currentBatter .. " stands in, bat cocked and ready.",
-        currentBatter .. " is batting. The pitcher comes set.",
         short .. " steps out, knocks the dirt off his cleats, and digs back in.",
         short .. " resets in the box, eyes locked on the pitcher.",
         short .. " taps the plate and settles back into his stance.",
-        "The pitcher peers in for the sign. " .. short .. " is ready.",
+        short .. " takes a slow practice swing and digs in.",
+        short .. " settles into the box, eyes locked on the mound.",
+        currentBatter .. " adjusts his batting gloves and gets set.",
+        short .. " takes a deep breath and crouches into his stance.",
+        currentBatter .. " looks down the line, then digs back in.",
+        short .. " rolls his shoulders and settles in.",
+        currentBatter .. " cocks the bat back and waggles it once.",
+        short .. " kicks at the dirt with his back foot and gets ready.",
     })
+
+    local tutorialText = ""
+    if not hasSeenLeadTutorial then
+        hasSeenLeadTutorial = true
+        tutorialText = [[
+
+No lead: safest choice. You stay anchored to the bag, but it'll be harder to steal or take an extra base.
+
+Short lead: balanced choice. You put some pressure on the defense while staying close enough to get back.
+
+Big lead: aggressive choice. Better chance to steal or take the next base, but the pitcher may notice and try to pick you off.]]
+    end
 
     inputLeadSize.Text = countText .. [[
 
-
 You're on ]] .. baseLabel .. [[. ]] .. situationFlavor .. [[
-
 
 ]] .. batterFlavor .. [[
 
-
-How big of a lead do you want?]]
+How big of a lead do you want?]] .. tutorialText
     Wherigo.GetInput(inputLeadSize)
 end
 
@@ -1126,6 +1424,7 @@ function askStealOrStay()
     local leadLabel = "a " .. leadSize
     if leadSize == "none" then leadLabel = "no" end
 
+    local short = getShortName(currentBatter)
     local flavorText = ""
     if leadSize == "big" then
         flavorText = pick({
@@ -1133,7 +1432,7 @@ function askStealOrStay()
             "You push your lead out wide, daring the pitcher to make a throw. The first baseman creeps closer.",
             "You take an aggressive lead, weight forward, ready to explode. The pitcher is rattled -- you can see it in his eyes.",
             "You edge further and further off the bag. The crowd murmurs. The pitcher shakes his head and steps off the rubber.",
-            "You're out in no man's land, testing the pitcher's nerve. He wants to throw over but he knows the batter is dangerous too.",
+            "You're out in no man's land, testing the pitcher's nerve. He wants to throw over but he knows " .. short .. " is dangerous too.",
             "Your lead is enormous. The third base coach is waving you back but you ignore him. You trust your legs.",
         })
     elseif leadSize == "short" then
@@ -1150,7 +1449,7 @@ function askStealOrStay()
             "You keep your foot on the base, playing it safe.",
             "You stay glued to the bag. No lead at all. The pitcher doesn't even look your way.",
             "You plant your foot on the base and wait. No risks. You're not going anywhere until the ball is in play.",
-            "You stand on the bag, arms crossed, watching the pitcher work. Let the batter handle this one.",
+            "You stand on the bag, arms crossed, watching the pitcher work. Let " .. short .. " handle this one.",
             "No lead. You hug the base and focus on reading the pitch. Sometimes patience is the play.",
             "You stay rooted to the bag. The defense relaxes. They're not worried about you running -- but maybe they should be.",
         })
@@ -1160,14 +1459,12 @@ function askStealOrStay()
         inputRunnerPlay.Choices = {"Stay where you are", "Call for a squeeze play"}
         inputRunnerPlay.Text = flavorText .. [[
 
-
-You have ]] .. leadLabel .. [[ lead. You're ninety feet from a walk-off. Stay where you are, or call for a squeeze play?
+You have ]] .. leadLabel .. [[ lead. You're ninety feet from a walk-off. Stay where you are, or call for a squeeze play?]] .. [[
 
 A squeeze play means the batter bunts while you sprint for home. If the bunt is good, you score. If not, you're out, inches from glory. High-risk, high-reward.]]
     else
         inputRunnerPlay.Choices = {"Stay where you are", "Try to steal"}
         inputRunnerPlay.Text = flavorText .. [[
-
 
 You have ]] .. leadLabel .. [[ lead. Try to steal ]] .. destLabel .. [[, or stay?]]
     end
@@ -1187,6 +1484,7 @@ function resolvePitch()
 end
 
 function resolveStealAttempt()
+    stealFromBase = currentBase
     local leadBonus = 0
     if leadSize == "big" then leadBonus = 1
     elseif leadSize == "none" then leadBonus = -2 end
@@ -1213,18 +1511,16 @@ function resolveStealAttempt()
     if dest == "home" then
         msg = msg .. [[
 
-
 RUN HOME!]]
     else
         msg = msg .. [[
-
 
 RUN TO ]] .. string.upper(dest) .. "!"
     end
 
     Wherigo.MessageBox{
         Text = msg,
-        Callback = function() advanceReason = "steal" beginTimedRun(dest) end,
+        Callback = function() advanceReason = "steal" beginRunToBase(dest) end,
     }
 end
 
@@ -1255,12 +1551,11 @@ function resolveSqueezePlay()
 
     msg = msg .. [[
 
-
 RUN HOME!]]
 
     Wherigo.MessageBox{
         Text = msg,
-        Callback = function() advanceReason = "squeeze" beginTimedRun("home") end,
+        Callback = function() advanceReason = "squeeze" beginRunToBase("home") end,
     }
 end
 
@@ -1284,9 +1579,15 @@ function resolveStayAttempt()
 
         if math.random(100) <= caughtChance then
             local msg = pick({
-                "The pitcher suddenly spins and fires to the base! You dive back, but the tag is already there. The umpire pumps his fist -- OUT!",
-                "Without warning, the pitcher snaps a throw to the bag! You scramble back but the fielder slaps the tag on your shoulder. Out!",
-                "The pitcher fakes toward home, then whirls and throws behind you! You were leaning the wrong way. The tag gets you. Out!",
+                [[The pitcher suddenly spins and fires to the base! You dive back, but the tag is already there. The umpire pumps his fist.]] .. [[
+
+OUT!]],
+                [[Without warning, the pitcher snaps a throw to the bag! You scramble back but the fielder slaps the tag on your shoulder.]] .. [[
+
+Out!]],
+                [[The pitcher fakes toward home, then whirls and throws behind you! You were leaning the wrong way. The tag gets you.]] .. [[
+
+Out!]],
             })
             if hasRallyCap and not itemUsed then
                 offerRallyCap(msg)
@@ -1468,7 +1769,7 @@ function handleWalk()
             Text = "Ball four! " .. short .. [[ takes the free pass and the bases were loaded! You're forced home! This is a walk-off walk!
 
 Run to home plate!]],
-            Callback = function() advanceReason = "walk" beginTimedRun("home") end,
+            Callback = function() advanceReason = "walk" beginRunToBase("home") end,
         }
     elseif firstOccupied and (currentBase == "first") then
         runnerOnFirst = true
@@ -1476,7 +1777,7 @@ Run to home plate!]],
             Text = "Ball four! " .. short .. [[ flips the bat and jogs to first. The pitcher missed his spot and now the bases are getting crowded. You're forced to move up.
 
 Run to second base!]],
-            Callback = function() advanceReason = "walk" beginTimedRun("second") end,
+            Callback = function() advanceReason = "walk" beginRunToBase("second") end,
         }
     elseif firstOccupied and secondOccupied and (currentBase == "second") then
         runnerOnFirst = true
@@ -1485,7 +1786,7 @@ Run to second base!]],
             Text = "Ball four! " .. short .. [[ takes first and the runners move up. With first and second occupied, you're forced to third!
 
 Run to third base!]],
-            Callback = function() advanceReason = "walk" beginTimedRun("third") end,
+            Callback = function() advanceReason = "walk" beginRunToBase("third") end,
         }
     else
         if runnerOnFirst then
@@ -1512,11 +1813,9 @@ function handleBatterStrikeout()
     })
     msg = msg .. [[
 
-
 Outs: ]] .. outs
     if outs >= 3 then
         handleGameLoss(msg .. [[
-
 
 Three outs. The side is retired.]])
     else
@@ -1569,19 +1868,17 @@ function resolveBIPOut()
             if outs >= 3 then
                 handleGameLoss(msg .. [[
 
-
 Three outs. The inning is over.]])
                 return
             end
             msg = msg .. [[
-
 
 But it was deep enough! You tag up at third and break for home the moment the ball hits the glove!
 
 RUN HOME!]]
             Wherigo.MessageBox{
                 Text = msg,
-                Callback = function() advanceReason = "tag_up" beginTimedRun("home") end,
+                Callback = function() advanceReason = "tag_up" beginRunToBase("home") end,
             }
             return
         end
@@ -1608,12 +1905,10 @@ RUN HOME!]]
     end
     msg = msg .. [[
 
-
 Outs: ]] .. outs
 
     if outs >= 3 then
         handleGameLoss(msg .. [[
-
 
 Three outs. The inning is over.]])
     else
@@ -1642,7 +1937,7 @@ function resolveBIPPartial()
                 Text = short .. [[ grounds to the right side -- the second baseman fields it and throws to first for the out. But with the infield drawn in, there's a lane to the plate! You break for home!
 
 RUN HOME!]],
-                Callback = function() advanceReason = "hit" beginTimedRun("home") end,
+                Callback = function() advanceReason = "hit" beginRunToBase("home") end,
             }
             return
         end
@@ -1672,6 +1967,66 @@ function advanceRunners(bases)
     end
 end
 
+function getBatterHitText(short, isBunt)
+    if isBunt then
+        return pick({
+            short .. " drops a beautiful bunt down the third base line! The ball dies on the chalk and the fielders have no play!",
+            short .. " pushes a perfect squeeze bunt toward the right side! The pitcher stumbles off the mound trying to field it!",
+        })
+    end
+    return pick({
+        short .. " rips a line drive into the outfield! The ball bounces on the grass as the fielder gives chase!",
+        short .. " lines one into left field! The outfielder charges it on one hop!",
+        short .. " punches one through the right side of the infield! The ball scoots into the outfield!",
+        short .. " slaps a grounder past the diving shortstop and into left! Base hit!",
+        short .. " bloops one into shallow center! It drops in front of the charging outfielder! Hit!",
+        short .. " drives one into the gap! The outfielders are giving chase!",
+    })
+end
+
+function getBatterFlavor(short)
+    local playerFlavors = {
+        ["Edgar"] = {
+            '"EDGAR! EDGAR! EDGAR!" The chant rolls through the stadium like thunder!',
+            'The Kingdome may be gone, but that chant lives forever. "EDGAR! EDGAR! EDGAR!"',
+            "The greatest DH of all time just did what he does best. The stadium shakes!",
+        },
+        ["Griffey"] = {
+            "The Kid makes it look so easy with that beautiful, perfect swing!",
+            "That swing is poetry. Forty-seven thousand fans just witnessed perfection!",
+            "Junior tosses the bat aside like he already knows. The Kid just doesn't miss!",
+        },
+        ["Ichiro"] = {
+            "Ichiro flicks the bat like a katana and the ball obeys!",
+            "Laser precision. Ichiro doesn't hit baseballs -- he places them!",
+            "The hit machine strikes again! Ichiro is already flying out of the box!",
+        },
+        ["J-Rod"] = {
+            "The No Fly Zone section in right field goes absolutely berserk!",
+            "J-Rod crushes it and the stadium erupts! This kid is electric!",
+            "Julio lets out a scream leaving the box! Pure energy!",
+        },
+        ["Cal"] = {
+            "A fan in the 'Pen screams 'DUMP HERE!' as the crowd begins to chant, 'MVP! MVP!'",
+            "Big Dumper delivers! The 'Pen is going absolutely nuclear!",
+            "The sound off that bat is GONE -- wait, no, it lands fair! Cal is pumping his fist as he takes off towards first!",
+        },
+        ["Naylor"] = {
+            '"NAYLED IT!" yells a fan in the upper deck! Naylor flips the bat and launches towards first!',
+            "Naylor explodes out of the box, his sparkly cleats flashing!",
+            "Naylor barrels out of the box like a freight train! That ball had no chance!",
+        },
+        ["Randy"] = {
+            "Randy takes off like a bullet! His helmet goes flying as he tears down the line!",
+            "October Randy has arrived! He drops the bat and flies!",
+            "Randy flips his bat and shoots off like a cannonball! Absolute chaos!",
+        },
+    }
+    local flavors = playerFlavors[short]
+    if flavors then return " " .. pick(flavors) end
+    return ""
+end
+
 function resolveBIPHit(hitType)
     local dest = getNextBase()
     local short = getShortName(currentBatter)
@@ -1687,64 +2042,7 @@ function resolveBIPHit(hitType)
         runnerOnFirst = true
     end
 
-    local msg = ""
-    if batterApproach == "bunt" then
-        msg = pick({
-            short .. " drops a beautiful bunt down the third base line! The ball dies on the chalk and the fielders have no play!",
-            short .. " pushes a perfect squeeze bunt toward the right side! The pitcher stumbles off the mound trying to field it!",
-        })
-    else
-        msg = pick({
-            short .. " rips a line drive into the outfield! The ball bounces on the grass as the fielder gives chase!",
-            short .. " lines one into left field! The outfielder charges it on one hop!",
-            short .. " punches one through the right side of the infield! The ball scoots into the outfield!",
-            short .. " slaps a grounder past the diving shortstop and into left! Base hit!",
-            short .. " bloops one into shallow center! It drops in front of the charging outfielder! Hit!",
-            short .. " drives one into the gap! The outfielders are giving chase!",
-        })
-    end
-
-    local playerFlavors = {
-            ["Edgar"] = {
-                '"EDGAR! EDGAR! EDGAR!" The chant rolls through the stadium like thunder!',
-                'The Kingdome may be gone, but that chant lives forever. "EDGAR! EDGAR! EDGAR!"',
-                "The greatest DH of all time just did what he does best. The stadium shakes!",
-            },
-            ["Griffey"] = {
-                "The Kid makes it look so easy with that beautiful, perfect swing!",
-                "That swing is poetry. Forty-seven thousand fans just witnessed perfection!",
-                "Junior tosses the bat aside like he already knows. The Kid just doesn't miss!",
-            },
-            ["Ichiro"] = {
-                "Ichiro flicks the bat like a katana and the ball obeys!",
-                "Laser precision. Ichiro doesn't hit baseballs -- he places them!",
-                "The hit machine strikes again! Ichiro is already flying out of the box!",
-            },
-            ["J-Rod"] = {
-                "The No Fly Zone section in right field goes absolutely berserk!",
-                "J-Rod crushes it and the stadium erupts! This kid is electric!",
-                "Julio lets out a scream leaving the box! Pure energy!",
-            },
-            ["Cal"] = {
-                "A fan in the 'Pen screams 'DUMP HERE!' as the crowd begins to chant, 'MVP! MVP!'",
-                "Big Dumper delivers! The 'Pen is going absolutely nuclear!",
-                "The sound off that bat is GONE -- wait, no, it lands fair! Cal is pumping his fist as he takes off towards first!",
-            },
-            ["Naylor"] = {
-                '"NAYLED IT!" yells a fan in the upper deck! Naylor flips the bat and launches towards first!',
-                "Naylor explodes out of the box, his sparkly cleats flashing!",
-                "Naylor barrels out of the box like a freight train! That ball had no chance!",
-            },
-            ["Randy"] = {
-                "Randy takes off like a bullet! His helmet goes flying as he tears down the line!",
-                "October Randy has arrived! He drops the bat and flies!",
-                "Randy flips his bat and shoots off like a cannonball! Absolute chaos!",
-            },
-        }
-    local flavors = playerFlavors[short]
-    if flavors then
-        msg = msg .. " " .. pick(flavors)
-    end
+    local msg = getBatterHitText(short, batterApproach == "bunt") .. getBatterFlavor(short)
 
     if dest == "home" then
         msg = msg .. [[ The third base coach is windmilling his arm -- GO! GO! GO!
@@ -1758,7 +2056,7 @@ RUN TO ]] .. string.upper(dest) .. "!"
 
     Wherigo.MessageBox{
         Text = msg,
-        Callback = function() advanceReason = "hit" beginTimedRun(dest) end,
+        Callback = function() advanceReason = "hit" beginRunToBase(dest) end,
     }
 end
 
@@ -1782,7 +2080,7 @@ RUN TO ]] .. string.upper(dest) .. "!"
         needNewBatter = false
         Wherigo.MessageBox{
             Text = msg,
-            Callback = function() advanceReason = "wild_pitch" beginTimedRun(dest) end,
+            Callback = function() advanceReason = "wild_pitch" beginRunToBase(dest) end,
         }
     else
         if balls >= 4 then
@@ -1800,16 +2098,17 @@ function offerRallyCap(failMsg)
     Wherigo.MessageBox{
         Text = failMsg,
         Callback = function()
+            local skipperFirstName = getSkipperFirstName()
             inputUseItem.Text = pick({
-                [[Wait. You still have the Rally Cap in your pocket. This is exactly what it's for.
+                [[Wait. You still have the Rally Cap in your pocket. This is exactly what it's for. Sometimes the magic works.
 
 Turn your cap inside out and try to change the vibes?]],
-                [[Hold on. The Rally Cap. Dan gave it to you for a moment just like this.
+                [[Hold on. The Rally Cap. ]] .. skipperFirstName .. [[ gave it to you for a moment just like this. He swore the baseball gods would be watching.
 
 Flip it inside out and see if the magic is real?]],
-                [[But wait -- you reach into your pocket and feel the Rally Cap. This is the moment.
+                [[But wait -- you reach into your pocket and feel the Rally Cap. You might have a chance to rewrite history. Only one way to find out.
 
-Turn it inside out and change your luck?]],
+Turn it inside out and try to change your luck?]],
             })
             inputUseItem.OnGetInput = function(input, answer)
                 if answer == "Yes" then
@@ -1842,9 +2141,8 @@ function resolveRallyReroll()
 
 ]] .. generateStealSuccessMsg(dest) .. [[
 
-
 RUN!]],
-                Callback = function() advanceReason = "steal" beginTimedRun(dest) end,
+                Callback = function() advanceReason = "steal" beginRunToBase(dest) end,
             }
         else
             Wherigo.MessageBox{
@@ -1853,29 +2151,157 @@ RUN!]],
             }
         end
     else
-        handleRunnerOut("You flip the cap inside out and the crowd holds its breath... but the baseball gods aren't listening today. The play stands. You're out.")
+        handleRunnerOut([[You flip the cap inside out and the crowd holds its breath... but the baseball gods aren't listening today. The play stands.]] .. [[
+
+You're out.]])
     end
 end
 
-function beginTimedRun(destination)
-    timedRunActive = true
-    timedRunDifficulty = 0
-
-    if destination == "home" then
-        timedRunDifficulty = -1
-    end
-
+function beginRunToBase(destination)
+    runnerInTransit = true
     deactivateAllBaseZones()
     local destZone = getZoneForBase(destination)
-    destZone.Active = true
-    destZone.Visible = true
+    activateZoneOrEnterIfInside(destZone)
 end
 
-function checkTimedRun()
-    if not timedRunActive then return true end
-    timedRunActive = false
-    local score = calculateScore(timedRunDifficulty, runnerSpeed, runnerIQ)
-    return score >= 5
+-- Returns a per-scenario base out percent. See CLAUDE.md "Baserunning out chance"
+-- for the design rationale. Walks always return 0 (safe). big_hit to first
+-- returns 0 too (the ball is in the gap, you are guaranteed at first).
+function getRunnerOutBaseRate(reason, dest)
+    if reason == "walk" then return 0 end
+    if reason == "hit" then
+        if dest == "first" then return 4 end
+        if dest == "home" then return 10 end
+        return 8
+    end
+    if reason == "big_hit" then
+        if dest == "first" then return 0 end
+        return 10
+    end
+    if reason == "tag_up" then return 15 end
+    if reason == "wild_pitch" then return 4 end
+    return 5
+end
+
+-- Rolls a stat-adjusted out chance. Returns true if the runner is safe on
+-- arrival. Faster + smarter runners get out less often.
+function isRunnerSafe(destination)
+    if not runnerInTransit then return true end
+    runnerInTransit = false
+    local baseRate = getRunnerOutBaseRate(advanceReason, destination)
+    if baseRate == 0 then return true end
+    local outChance = baseRate + (3 - runnerSpeed) * 2 + (4 - runnerIQ)
+    if outChance < 1 then outChance = 1 end
+    if outChance > 30 then outChance = 30 end
+    return math.random(100) > outChance
+end
+
+-- Per-scenario, per-destination out narrations. Every variant uses the
+-- chunk-boundary punchline pattern (body in one chunk, conclusion on its
+-- own line). Falls through to a destination-only default if no scenario
+-- match.
+function getRunnerOutMsg(reason, dest)
+    if reason == "hit" then
+        if dest == "first" then
+            return pick({
+                [[You sprinted down the line, but the throw beat you to the bag. The first baseman stretched and caught it.]] .. [[
+
+Out by half a step.]],
+                [[The shortstop charges, fields cleanly, and fires across. The first baseman scoops it on a short hop.]] .. [[
+
+Out.]],
+                [[The third baseman snags your slow roller barehanded. The throw beats you by a step.]] .. [[
+
+Out at first.]],
+            })
+        elseif dest == "second" then
+            return pick({
+                [[You rounded second hard, but the cutoff man fired back. The shortstop slaps the tag on you sliding back.]] .. [[
+
+Out at second.]],
+                [[The center fielder charges and unloads a perfect throw. The second baseman catches it on the bag.]] .. [[
+
+Out.]],
+            })
+        elseif dest == "third" then
+            return pick({
+                [[The throw beats you to third. The third baseman puts the tag on you as you slide.]] .. [[
+
+Out at third.]],
+                [[The left fielder fires a strike to third. You're a sitting duck halfway between.]] .. [[
+
+Out.]],
+            })
+        else
+            return pick({
+                [[You charge home with everything you've got, but the throw is right on the money. The catcher blocks the plate.]] .. [[
+
+Out.]],
+                [[The cutoff man relays it home. You slide hard but the catcher tags you on the leg.]] .. [[
+
+Out at the plate.]],
+            })
+        end
+    elseif reason == "big_hit" then
+        if dest == "second" then
+            return pick({
+                [[You round first and dig for second, but the relay throw beats you. The shortstop slaps the tag on.]] .. [[
+
+Out at second.]],
+                [[The right fielder cuts the ball off and fires to second. The throw beats you.]] .. [[
+
+Out.]],
+            })
+        elseif dest == "third" then
+            return pick({
+                [[You barrel around second toward third, but the relay was perfect. The third baseman swipes the tag as you slide in.]] .. [[
+
+Out at third.]],
+                [[The throw to third beats you by a half-step. The tag catches your foot just before the bag.]] .. [[
+
+So close.]],
+            })
+        end
+    elseif reason == "tag_up" then
+        return pick({
+            [[You tag and break for home, but the throw beats you. The catcher blocks the plate.]] .. [[
+
+Out at the plate.]],
+            [[The outfielder fires a perfect strike home. The catcher catches it and sweeps the tag.]] .. [[
+
+Out.]],
+            [[You go on contact, but the throw is right behind you. The tag gets you at the plate.]] .. [[
+
+So close.]],
+        })
+    elseif reason == "wild_pitch" then
+        return pick({
+            [[You break for the next bag, but the catcher recovers fast. He springs up and fires. The throw beats you.]] .. [[
+
+Out.]],
+            [[You hesitate for a split second, and the catcher catches up to the ball. The throw nails you.]] .. [[
+
+Out.]],
+        })
+    end
+    -- Defensive fallback per destination if a new advance reason gets added later
+    if dest == "first" then
+        return [[You sprinted down the line, but the throw beat you to the bag. The first baseman stretched and caught it.]] .. [[
+
+Out by half a step.]]
+    elseif dest == "second" then
+        return [[You slid into second, but the tag was waiting. The fielder never took the glove off the bag.]] .. [[
+
+Out.]]
+    elseif dest == "third" then
+        return [[You were heading to third, but the throw was right on the money. The tag caught you on the leg.]] .. [[
+
+Out.]]
+    else
+        return [[You were charging home, legs burning, but the throw beat you there. The catcher put the tag down and the umpire called you out.]] .. [[
+
+So close.]]
+    end
 end
 
 function getNextBase()
@@ -1962,6 +2388,93 @@ Want to try again?]],
     }
 end
 
+function getWinText()
+    if selectedField == "north" then
+        return [[YOUR FOOT HITS THE PLATE!
+
+Safe! SAFE! HOLY SMOKES, THAT'S THE BALLGAME!
+
+For a moment, you can't hear anything over your pounding heartbeat. Then the sound hits you: thousands of voices, all screaming as one. The Kingdome is shaking.
+
+MARINERS WIN!]]
+    end
+    return [[YOUR FOOT HITS THE PLATE!
+
+Safe! SAFE! HOLY SMOKES, THAT'S THE BALLGAME!
+
+For a moment, you can't hear anything over your pounding heartbeat. Then the sound hits you: thousands of voices, all screaming as one. T-Mobile Park is shaking.
+
+MARINERS WIN!]]
+end
+
+function getAnnouncerName()
+    if selectedField == "north" then return "Dave Niehaus" end
+    return "Rick Rizzs"
+end
+
+function getTeamPileText()
+    return "Your teammates pour out of the dugout in a dead sprint. The first one to reach you nearly tackles you. Then another. Then all of them. A pile of bodies and pure happiness on the dirt behind home plate."
+end
+
+function getTeamCelebrationText()
+    local short = string.upper(getShortName(selectedPlayer))
+    return "You're hoisted back to your feet as the crowd chants your name: \"" .. short .. "! " .. short .. [[!"
+
+You and your teammates sling arms over shoulders, dancing in a raucous circle. As you spin, you get a glimpse up at the booth, where you spot the silhouette of ]] .. getAnnouncerName() .. [[ pumping his arms in pure joy.
+
+Then you and the team break apart, and it's all high fives, hugs, and butt slaps. Ice-cold Gatorade hits you from behind before you even see it coming. Fireworks begin to burst overhead as someone presses the golden trident into your hand.
+
+Baseball really is magic.]]
+end
+
+function getWrapperRevealText()
+    return [[As the fireworks continue to explode, you feel a soft tap on your arm. You turn to see Humpy, your favorite salmon mascot, offering you a piece of celebratory bubblegum. You smile, plucking it from his outstretched fin. "You know me so well, buddy."
+
+As you unwrap it, you notice tiny numbers written on the wrapper. You glance up at Humpy in surprise. You could swear he gives you a quick wink before disappearing back into the crowd.
+
+You flatten out the wrapper to reveal the following:
+]] .. FINAL_COORDS_TEXT .. [[
+
+You tuck the wrapper into your pocket and pat it twice. That one's coming home with you.]]
+end
+
+function getCartridgeCodeDescription(code, shortCode)
+    return [[The game-winning ball from your walk-off hit. The cartridge code is carefully printed under the stitching:
+]] .. code .. [[
+
+(If the full code above is rejected on Wherigo.com, try entering just the first 15 characters: ]] .. shortCode .. [[.)]]
+end
+
+function getCompletionCodeText(code)
+    return [[As the celebrations continue, ]] .. getSkipperName() .. [[ yells, "Heads up!", tossing the game-winning ball over the crowd to you.
+
+Catching it, you smile, and turn it over to see a cartridge code carefully printed under the stitching:
+]] .. code .. [[
+
+You grip the ball a little tighter.
+
+Somewhere beyond the outfield walls, the post-game party is already starting. Seattle's got a lot to celebrate tonight.]]
+end
+
+function showCompletionCodeMessage()
+        itemBubblegumWrapper.Visible = true
+        itemBubblegumWrapper:MoveTo(Player)
+        itemCartridgeCode.Visible = true
+        itemCartridgeCode:MoveTo(Player)
+        zoneCache.Active = true
+        zoneCache.Visible = true
+        cart.Complete = true
+        local code = Player.CompletionCode or "(code unavailable)"
+        local shortCode = string.sub(code, 1, 15)
+        itemCartridgeCode.Description = getCartridgeCodeDescription(code, shortCode)
+        Wherigo.MessageBox{
+            Text = getCompletionCodeText(code),
+            Callback = function()
+                Wherigo.GetInput(inputWinChoice)
+            end,
+        }
+end
+
 function handleGameWin()
     gameWon = true
     hasPlayedBefore = true
@@ -1970,40 +2483,11 @@ function handleGameWin()
     cart.Complete = true
 
     showSequence({
-        { Text = [[YOUR FOOT HITS THE PLATE!
-
-For one heartbeat, the stadium is silent -- and then it erupts. Thousands of voices, all screaming as one. The sound hits you like a wave.]] },
-        { Text = "Your teammates pour out of the dugout in a dead sprint. The first one to reach you nearly tackles you. Then another. Then all of them. A pile of bodies and pure happiness on the dirt behind home plate." },
-        { Text = "You're hoisted back to your feet as the crowd chants your name: \"" .. string.upper(getShortName(selectedPlayer)) .. "! " .. string.upper(getShortName(selectedPlayer)) .. [[!"
-
-You and your teammates sling arms over shoulders, dancing in a raucous circle. As you spin, you get a glimpse up at the booth, where you spot the silhouette of Rick Rizzs pumping his arms in pure joy. Then you and the team break apart, and it's all high fives, hugs, and butt slaps. Ice-cold Gatorade hits you from behind before you even see it coming. Fireworks begin to burst overhead.
-
-Baseball really is magic.]] },
-        { Text = [[As the fireworks continue to explode, you feel a soft tap on your arm. You turn to see Humpy, your favorite salmon mascot, offering you a piece of celebratory bubblegum. You smile, plucking it from his outstretched fin. "You know me so well, buddy."
-
-As you unwrap it, you notice tiny numbers written on the wrapper. You glance up at Humpy in surprise. You could swear he gives you a quick wink before disappearing back into the crowd.
-
-You flatten out the wrapper to reveal the following: FINAL COORDS
-
-You tuck the wrapper into your pocket and pat it twice. That one's coming home with you.]] },
-    }, function()
-        itemBubblegumWrapper.Visible = true
-        itemBubblegumWrapper:MoveTo(Player)
-        itemCartridgeCode.Visible = true
-        itemCartridgeCode:MoveTo(Player)
-        zoneCache.Active = true
-        zoneCache.Visible = true
-        Wherigo.MessageBox{
-            Text = [[As the celebrations continue, Dan Wilson yells, "Heads up!", tossing the game-winning ball over the crowd to you.
-
-Catching it, you smile, and turn it over to see a cartridge code carefully printed under the stitching: XXX. You grip the ball a little tighter.
-
-Somewhere beyond the outfield walls, the post-game party is already starting. Seattle's got a lot to celebrate tonight.]],
-            Callback = function()
-                Wherigo.GetInput(inputWinChoice)
-            end,
-        }
-    end)
+        { Text = getWinText() },
+        { Text = getTeamPileText() },
+        { Text = getTeamCelebrationText() },
+        { Text = getWrapperRevealText() },
+    }, showCompletionCodeMessage)
 end
 
 function resetGameState()
@@ -2015,6 +2499,8 @@ function resetGameState()
     balls = 0
     strikes = 0
     pitchNumber = 0
+    hasSeenSwingTutorial = false
+    hasSeenLeadTutorial = false
     batterIndex = 0
     currentBatter = ""
     hasRallyCap = false
@@ -2025,12 +2511,12 @@ function resetGameState()
     gotItem = false
     pineTarActive = false
     mooseMagicActive = false
-    timedRunActive = false
-    timedRunDifficulty = 0
+    runnerInTransit = false
     bigHitInProgress = false
     advanceReason = ""
     extraBasesToRun = 0
     stealResult = ""
+    stealFromBase = ""
     squeezeResult = ""
     consecutiveBigLeads = 0
     runnerOnFirst = false
@@ -2042,7 +2528,8 @@ function resetGameState()
     itemPineTarRag.Visible = false
     itemScoutingReport.Visible = false
     itemMooseMagic.Visible = false
-    triviaQuestionsSeen = {}
+    -- NOTE: triviaQuestionsSeen intentionally NOT reset here so questions do not
+    -- repeat across replays. pickTriviaQuestion auto-resets when the pool runs out.
 end
 
 function generateStealSuccessMsg(dest)
@@ -2066,49 +2553,90 @@ function generateStealSuccessMsg(dest)
 end
 
 function generateStealFailMsg()
-    if currentBase == "first" then
+    local origin = stealFromBase
+    if origin == "" then origin = currentBase end
+    if origin == "first" then
         return pick({
-            "You break for second, but the catcher was ready. He pops up like a spring and throws a laser to the bag. You're dead to rights. The shortstop slaps the tag on you before you even start your slide.",
-            "You take off for second, but the pitcher was tipping the pitch. The catcher knew it was coming. The throw beats you by three steps. Out.",
-            "You get a late jump and the catcher nails you. The throw is perfect -- low and on the bag. The shortstop doesn't even have to move his glove. Out at second.",
+            [[You break for second, but the catcher was ready. He pops up like a spring and throws a laser to the bag. The shortstop slaps the tag on you before you even start your slide.]] .. [[
+
+Out at second.]],
+            [[You take off for second, but the pitcher was tipping the pitch. The catcher knew it was coming. The throw beats you by three steps.]] .. [[
+
+Out.]],
+            [[You get a late jump and the catcher nails you. The throw is perfect -- low and on the bag. The shortstop doesn't even have to move his glove.]] .. [[
+
+Out at second.]],
         })
-    elseif currentBase == "second" then
+    elseif origin == "second" then
         return pick({
-            "You take off for third, but the catcher guns you down with a throw right on the money. The third baseman puts the tag on you as you slide. Out!",
-            "You break for third, but the pitcher saw you leaning. He steps off and fires to the shortstop covering third. You're caught in no-man's land. Tagged out!",
+            [[You take off for third, but the catcher guns you down with a throw right on the money. The third baseman puts the tag on you as you slide.]] .. [[
+
+Out!]],
+            [[You break for third, but the pitcher saw you leaning. He steps off and fires to the shortstop covering third. You're caught in no-man's land.]] .. [[
+
+Tagged out!]],
         })
     else
         return pick({
-            "You break for home -- a daring attempt! But the catcher reads it perfectly. He blocks the plate with his shin guard and puts the tag on you as you come in. Out!",
-            "You sprint for home, but the pitcher sees you coming. He fires a fastball to the catcher, who is set up perfectly in front of the plate. You're tagged out in a cloud of dust.",
+            [[You break for home -- a daring attempt! But the catcher reads it perfectly. He blocks the plate with his shin guard and puts the tag on you as you come in.]] .. [[
+
+Out!]],
+            [[You sprint for home, but the pitcher sees you coming. He fires a fastball to the catcher, who is set up perfectly in front of the plate.]] .. [[
+
+You're tagged out in a cloud of dust.]],
         })
     end
 end
 
 function generateSqueezeFailMsg(result)
+    local short = getShortName(currentBatter)
     if result == "missed" then
         return pick({
-            "The batter swings through the bunt! The pitch goes straight into the catcher's mitt and you're a sitting duck. He steps forward and tags you before you can even try to get back. Out at home.",
-            "The batter misses the bunt completely! The catcher squeezes the pitch and you're dead to rights halfway down the line. He doesn't even have to throw. Tag. Out.",
-            "The batter whiffs on the bunt attempt! The ball pops into the catcher's glove and he's waiting for you with the tag. You never had a chance. Out!",
+            short .. [[ swings through the bunt! The pitch goes straight into the catcher's mitt and you're a sitting duck. He steps forward and tags you before you can even try to get back.]] .. [[
+
+Out at home.]],
+            short .. [[ misses the bunt completely! The catcher squeezes the pitch and you're dead to rights halfway down the line. He doesn't even have to throw.]] .. [[
+
+Tag. Out.]],
+            short .. [[ whiffs on the bunt attempt! The ball pops into the catcher's glove and he's waiting for you with the tag. You never had a chance.]] .. [[
+
+Out!]],
         })
     elseif result == "popped" then
         return pick({
-            "The batter pops the bunt straight up in the air! The catcher throws off his mask and squeezes it. You slam on the brakes but there's nowhere to go -- you're doubled off third. Double play.",
-            "Pop up! The batter gets under the bunt and it floats up toward the pitcher. He catches it and fires to third. You're caught off the bag. Double play. Inning over.",
-            "The bunt goes straight up! The catcher catches it right in front of the plate. You try to scramble back to third but the throw beats you there. Two outs on one play.",
+            short .. [[ pops the bunt straight up in the air! The catcher throws off his mask and squeezes it. You slam on the brakes but there's nowhere to go -- you're doubled off third.]] .. [[
+
+Double play.]],
+            [[Pop up! ]] .. short .. [[ gets under the bunt and it floats up toward the pitcher. He catches it and fires to third. You're caught off the bag.]] .. [[
+
+Double play. Inning over.]],
+            [[The bunt goes straight up! The catcher catches it right in front of the plate. You try to scramble back to third but the throw beats you there.]] .. [[
+
+Two outs on one play.]],
         })
     elseif result == "hard_to_pitcher" then
         return pick({
-            "The batter bunts it too hard -- right back to the pitcher! He fields it cleanly, turns, and fires home. The catcher blocks the plate and puts the tag on you. Out!",
-            "The bunt comes off the bat too hot, right at the pitcher. He gloves it, wheels toward home, and throws a strike to the catcher. You're out by five feet.",
-            "The batter pushes the bunt too firmly and it rolls straight to the mound. The pitcher fields it bare-handed and flips it home. The catcher is waiting. Out at the plate.",
+            short .. [[ bunts it too hard -- right back to the pitcher! He fields it cleanly, turns, and fires home. The catcher blocks the plate and puts the tag on you.]] .. [[
+
+Out!]],
+            [[The bunt comes off the bat too hot, right at the pitcher. He gloves it, wheels toward home, and throws a strike to the catcher.]] .. [[
+
+You're out by five feet.]],
+            short .. [[ pushes the bunt too firmly and it rolls straight to the mound. The pitcher fields it bare-handed and flips it home. The catcher is waiting.]] .. [[
+
+Out at the plate.]],
         })
     else
         return pick({
-            "The batter gets the bunt down, but it rolls right to the third baseman. He charges, barehand it, and fires home. The catcher sweeps the tag on you as you slide in. Out!",
-            "The bunt is down but the catcher pounces on it like a cat. He scoops the ball and dives back toward the plate with the tag. You slide but he gets you on the shin. Out!",
-            "The batter bunts it fair but the first baseman was charging hard. He fields it on the run and throws a bullet home. The catcher catches it and blocks the plate. Out at home.",
+            short .. [[ gets the bunt down, but it rolls right to the third baseman. He charges, barehand it, and fires home. The catcher sweeps the tag on you as you slide in.]] .. [[
+
+Out!]],
+            [[The bunt is down but the catcher pounces on it like a cat. He scoops the ball and dives back toward the plate with the tag. You slide but he gets you on the shin.]] .. [[
+
+Out!]],
+            short .. [[ bunts it fair but the first baseman was charging hard. He fields it on the run and throws a bullet home. The catcher catches it and blocks the plate.]] .. [[
+
+Out at home.]],
         })
     end
 end
@@ -2116,6 +2644,7 @@ end
 inputSelectPlayer.OnGetInput = function(input, answer)
     selectedPlayer = answer
     loadRunnerStats(answer)
+    local p = playerDB[answer]
 
     remainingPlayers = {}
     for _, name in ipairs(playerNames) do
@@ -2126,6 +2655,8 @@ inputSelectPlayer.OnGetInput = function(input, answer)
 
     Wherigo.MessageBox{
         Text = selectedPlayer .. [[! My oh my, that's a fabulous choice.
+
+]] .. p.selectionIntro .. [[
 
 Now set your batting order. These are the players who will bat behind you while you try to score. Put your best hitters where you need them most.]],
         Callback = function() pickNextLineupSlot() end,
@@ -2145,7 +2676,6 @@ function pickNextLineupSlot()
     local text = "Pick batter #" .. slot .. [[:]]
     for _, name in ipairs(remainingPlayers) do
         text = text .. [[
-
 
 ]] .. name .. " -- " .. playerDB[name].desc
     end
@@ -2175,7 +2705,6 @@ function showLineupSummary()
 1. ]] .. selectedPlayer .. [[ (you)]]
     for i, name in ipairs(lineupOrder) do
         msg = msg .. [[
-
 ]] .. (i + 1) .. [[. ]] .. name
     end
     Wherigo.MessageBox{
@@ -2185,6 +2714,8 @@ function showLineupSummary()
 end
 
 function pickTriviaQuestion()
+    if #triviaQuestions == 0 then return nil end
+
     local available = {}
     for i = 1, #triviaQuestions do
         local seen = false
@@ -2193,7 +2724,17 @@ function pickTriviaQuestion()
         end
         if not seen then table.insert(available, i) end
     end
-    if #available == 0 then return nil end
+    if #available == 0 then
+        -- All questions seen across this and prior playthroughs. Reset and refill.
+        triviaQuestionsSeen = {}
+        for i = 1, #triviaQuestions do
+            table.insert(available, i)
+        end
+    end
+    if #available == 0 then
+        table.insert(triviaQuestionsSeen, 1)
+        return triviaQuestions[1]
+    end
     local qIdx = available[math.random(#available)]
     table.insert(triviaQuestionsSeen, qIdx)
     return triviaQuestions[qIdx]
@@ -2215,21 +2756,33 @@ function startDugoutTrivia()
         Wherigo.MessageBox{
             Text = [[A teammate grabs your shoulder. "Hey -- go be a hero out there." He slaps you on the back hard enough to sting.
 
-Head to Home Plate.]],
+Head to home plate.]],
             Callback = function() transitionToHomePlate() end,
         }
         return
     end
 
     local danIntro = ""
-    if hasPlayedBefore then
-        danIntro = [[As you set out towards the field, a familiar hand lands on your shoulder. You turn to see Dan Wilson with that same glint in his eye. You've been here before. You've got a very good feeling about this.
+    if selectedField == "north" then
+        if hasPlayedBefore then
+            danIntro = [[As you set out towards the field, a familiar hand lands on your shoulder. You turn to see Lou Piniella with that same fire in his eyes. You've been here before. You've got a very good feeling about this.
 
 "Hold on, I've got something that might prove handy. Just answer one question correctly and it's all yours."]]
+        else
+            danIntro = [[As you move out towards the field, you feel a hand on your shoulder. You turn to see Lou Piniella, the skipper, all fire and focus, watching the field like he's already three moves ahead. He managed the Mariners through their first real taste of October baseball, and the Kingdome is roaring above you like it remembers.
+
+"Hold on. I've got something that might prove handy. Answer one question correctly and it's yours."]]
+        end
     else
-        danIntro = [[As you move out towards the field, you feel a hand on your shoulder. You turn to see Dan Wilson, the skipper, with a glint in his eye. He caught over a thousand games as a Mariner, and now he runs the show from the dugout. And it seems like he's got something special up his sleeve tonight.
+        if hasPlayedBefore then
+            danIntro = [[As you set out towards the field, a familiar hand lands on your shoulder. You turn to see Dan Wilson with that same glint in his eye. You've been here before. You've got a very good feeling about this.
 
 "Hold on, I've got something that might prove handy. Just answer one question correctly and it's all yours."]]
+        else
+            danIntro = [[As you move out towards the field, you feel a hand on your shoulder. You turn to see Dan Wilson, the skipper, calm as ever with a glint in his eye. He caught over a thousand games as a Mariner, and now he runs the show from the dugout.
+
+"Hold on. I've got something that might prove handy. Answer one question correctly and it's yours."]]
+        end
     end
 
     Wherigo.MessageBox{
@@ -2239,10 +2792,16 @@ Head to Home Plate.]],
                 if checkTriviaAnswer(tq, answer) then
                     awardDugoutItem()
                 else
-                    Wherigo.MessageBox{
-                        Text = [[Dan shakes his head in disappointment, then shrugs. "That's not quite it, but no worries. I know you can handle this."
+                    local missText = [[Dan shakes his head in disappointment, then shrugs. "That's not quite it, but no worries. I know you can handle this."
 
-Head to home plate. Batter up!]],
+Head to home plate. Batter up!]]
+                    if selectedField == "north" then
+                        missText = [[Lou gives a quick shake of his head, then claps you on the shoulder. "That's not quite it, but no worries. I know you can handle this."
+
+Head to home plate. Batter up!]]
+                    end
+                    Wherigo.MessageBox{
+                        Text = missText,
                         Callback = function() transitionToHomePlate() end,
                     }
                 end
@@ -2254,11 +2813,18 @@ end
 
 function awardDugoutItem()
     gotItem = true
+    local skipperFirstName = getSkipperFirstName()
+    local awardIntro = [[Dan winks.
+
+"You got it! I saved up a few things for a moment like this. Pick the one you think will help the most."]]
+    if selectedField == "north" then
+        awardIntro = [[Lou flashes a grin.
+
+"You got it! I saved up a few things for a moment like this. Pick the one you think will help the most."]]
+    end
 
     Wherigo.MessageBox{
-        Text = [[Dan winks.
-
-"You got it! I saved up a few things for a moment like this. Pick the one you think will help the most."]],
+        Text = awardIntro,
         Callback = function()
             inputItemChoice.Text = [[Rally Cap -- A beat-up old cap. If things go sideways, flip it inside out for another chance.
 
@@ -2274,26 +2840,25 @@ Moose Magic -- A tiny whistle. Blow it to unleash the Mariner Moose. When the cr
                     hasRallyCap = true
                     itemRallyCap.Visible = true
                     itemRallyCap:MoveTo(Player)
-                    msg = "Dan grins and pulls out a beat-up cap. \"Take this. Flip it inside out when you need a miracle. The baseball gods pay attention to stuff like this.\""
+                    msg = skipperFirstName .. " grins and pulls out a beat-up cap. \"Take this. Flip it inside out when you need a miracle. The baseball gods pay attention to stuff like this.\""
                 elseif answer == "Pine Tar Rag" then
                     hasPineTarRag = true
                     itemPineTarRag.Visible = true
                     itemPineTarRag:MoveTo(Player)
-                    msg = "Dan reaches into his back pocket and pulls out a sticky brown rag. \"Pine tar. Good stuff. Rub it on the handle before you swing and the bat won't slip. Trust me.\""
+                    msg = skipperFirstName .. " reaches into his back pocket and pulls out a sticky brown rag. \"Pine tar. Good stuff. Rub it on the handle before you swing and the bat won't slip. Trust me.\""
                 elseif answer == "Scouting Report" then
                     hasScoutingReport = true
                     itemScoutingReport.Visible = true
                     itemScoutingReport:MoveTo(Player)
-                    msg = "Dan slips you a folded piece of paper. \"Scouting report on their pitcher and catcher. Release times, tendencies, the whole thing. Save it for when you need it most.\""
+                    msg = skipperFirstName .. " slips you a folded piece of paper. \"Scouting report on their pitcher and catcher. Release times, tendencies, the whole thing. Save it for when you need it most.\""
                 else
                     hasMooseMagic = true
                     itemMooseMagic.Visible = true
                     itemMooseMagic:MoveTo(Player)
-                    msg = "Dan pulls out a tiny whistle from his jacket. \"Blow this and the Moose comes out. I've never seen him fail to turn a game around. Hold onto it.\""
+                    msg = skipperFirstName .. " pulls out a tiny whistle from his jacket. \"Blow this and the Moose comes out. I've never seen him fail to turn a game around. Hold onto it.\""
                 end
                 Wherigo.MessageBox{
                     Text = msg .. [[
-
 
 Now head to home plate. Batter up!]],
                     Callback = function() transitionToHomePlate() end,
@@ -2307,8 +2872,7 @@ end
 function transitionToHomePlate()
     zoneDugout.Active = false
     zoneDugout.Visible = false
-    zoneHomePlate.Active = true
-    zoneHomePlate.Visible = true
+    activateZoneOrEnterIfInside(zoneHomePlate)
 end
 
 inputSwing.OnGetInput = function(input, answer)
@@ -2347,8 +2911,7 @@ function restartNewPlayer(msg)
     Wherigo.MessageBox{
         Text = msg,
         Callback = function()
-            zoneDugout.Active = true
-            zoneDugout.Visible = true
+            activateZoneOrEnterIfInside(zoneDugout)
         end,
     }
 end
@@ -2368,10 +2931,9 @@ inputRestart.OnGetInput = function(input, answer)
 
 The dugout stirs. Your teammates look at each other. They've been here before. Time to do it again.
 
-Head back to the dugout area.]],
+Head back to the dugout.]],
             Callback = function()
-                zoneDugout.Active = true
-                zoneDugout.Visible = true
+                activateZoneOrEnterIfInside(zoneDugout)
             end,
         }
     elseif answer == "Return to player selection" then
@@ -2388,24 +2950,35 @@ Thanks for playing Bottom of the 9th. The Mariners will get them next time.]],
 end
 
 inputWinChoice.OnGetInput = function(input, answer)
-    if answer == "Play again" then
-        restartNewPlayer([[The game rewinds. New player, new lineup, new plan. The situation is the same -- bottom of the ninth, one run to win.
+    if answer == "Run it back" then
+        restartNewPlayer([[Run it back. New player, new lineup, new plan. Same field, same stakes -- bottom of the ninth, one run to win.
 
 Head back to the dugout and choose your player.]])
+    elseif answer == "Switch ballparks" then
+        local newField = (selectedField == "north") and "south" or "north"
+        selectedField = newField
+        setFieldCoordinates(newField)
+        local destLabel = (newField == "north") and "the Kingdome" or "T-Mobile Park"
+        restartNewPlayer("You sling your bat bag over your shoulder and head down the alley to " .. destLabel .. ". Different vibe, same mission. Bottom of the 9th, one run to win.\n\nHead to the dugout and choose your player.")
     else
+        -- Call it a night: deactivate the post-game dugout so the player can wander safely.
+        -- Hand them the Golden Trident as the manual restart affordance.
+        deactivateAllBaseZones()
+        itemTrident.Visible = true
+        itemTrident:MoveTo(Player)
         Wherigo.MessageBox{
             Text = [[The stadium lights dim. The fireworks fade. The greatest night of your life.
 
 The crowd files out into the summer night, still buzzing. You linger for just a moment longer, taking one last look at the field.
 
 My, oh my.]],
-            Callback = function()
-                zoneDugout.Description = "The Mariners dugout. Head back here if you want to play again."
-                zoneDugout.Active = true
-                zoneDugout.Visible = true
-            end,
         }
     end
+end
+
+zoneTunnel.OnEnter = function()
+    if selectedField ~= "" then return end
+    Wherigo.GetInput(inputFieldSelect)
 end
 
 zoneDugout.OnEnter = function()
@@ -2469,10 +3042,10 @@ end
 zoneHomePlate.OnEnter = function()
     if gameWon or gameLost then return end
 
-    if timedRunActive then
-        local inTime = checkTimedRun()
+    if runnerInTransit then
+        local inTime = isRunnerSafe("home")
         if not inTime then
-            handleRunnerOut("You were charging home, legs burning, but the throw beat you there. The catcher put the tag down and the umpire called you out. So close.")
+            handleRunnerOut(getRunnerOutMsg(advanceReason, "home"))
             return
         end
         if advanceReason == "steal" then
@@ -2517,16 +3090,16 @@ end
 zoneFirstBase.OnEnter = function()
     if gameWon or gameLost then return end
 
-    if timedRunActive then
-        local inTime = checkTimedRun()
+    if runnerInTransit then
+        local inTime = isRunnerSafe("first")
         if not inTime then
-            handleRunnerOut("You sprinted down the line, but the throw beat you to the bag. The first baseman stretched and caught it. Out by half a step.")
+            handleRunnerOut(getRunnerOutMsg(advanceReason, "first"))
             return
         end
     end
 
     -- guard against iOS re-firing OnEnter after backgrounding
-    if currentBase == "first" and not timedRunActive and not bigHitInProgress then return end
+    if currentBase == "first" and not runnerInTransit and not bigHitInProgress then return end
 
     if bigHitInProgress then
         bigHitInProgress = false
@@ -2543,7 +3116,7 @@ RUN TO SECOND!]],
 
 RUN TO SECOND!]],
             }),
-            Callback = function() advanceReason = "big_hit" beginTimedRun("second") end,
+            Callback = function() advanceReason = "big_hit" beginRunToBase("second") end,
         }
         return
     end
@@ -2564,7 +3137,7 @@ Now the real work begins.]],
         })
     else
         msg = pick({
-            [[Safe at first! You pull up on the bag, chest heaving, and dust off your jersey. The first base coach gives you a pat on the back.
+            [[Safe at first! You pull up on the bag, chest heaving. The first base coach gives you a pat on the back.
 
 The winning run is aboard. The crowd is buzzing. One base down, three more to go.]],
             [[You hit the bag at full speed and pull up safe! The first baseman catches the throw a half-second too late. The crowd erupts.
@@ -2595,13 +3168,14 @@ function startFirstBaseTrivia()
     end
 
     local coachText = ""
+    local skipperFirstName = getSkipperFirstName()
     if hasPlayedBefore then
-        coachText = "The first base coach leans in close. You feel like you know what he's going to say before he says it. \"Hey -- I've got something for you, but you gotta earn it. One question.\""
+        coachText = "The first base coach leans in close, all business now. \"Hey -- I've got something for you, but you gotta earn it. One question.\""
     else
         coachText = pick({
-            "The first base coach leans in close. \"Hey -- I saw you strike out on Dan's question. I've got something for you too, but you gotta earn it. One question.\"",
-            "The first base coach sidles up next to you on the bag. \"Dan told me you missed his question. No worries -- I got my own stash. Get this one right and it's all yours.\"",
-            "The first base coach nudges your elbow and grins. \"Dan said you came up empty. I've got a second chance for you. One question. You ready?\"",
+            "The first base coach leans in close. \"Hey -- I saw you strike out on " .. skipperFirstName .. "'s question. I've got something for you too, but you gotta earn it. One question.\"",
+            "The first base coach sidles up next to you on the bag. \"" .. skipperFirstName .. " told me you missed his question. No worries -- I got my own stash. Get this one right and it's all yours.\"",
+            "The first base coach nudges your elbow and grins. \"" .. skipperFirstName .. " said you came up empty. I've got a second chance for you. One question. You ready?\"",
         })
     end
 
@@ -2672,16 +3246,16 @@ end
 zoneSecondBase.OnEnter = function()
     if gameWon or gameLost then return end
 
-    if timedRunActive then
-        local inTime = checkTimedRun()
+    if runnerInTransit then
+        local inTime = isRunnerSafe("second")
         if not inTime then
-            handleRunnerOut("You slid into second, but the tag was waiting. The fielder never took the glove off the bag. Out.")
+            handleRunnerOut(getRunnerOutMsg(advanceReason, "second"))
             return
         end
     end
 
     -- guard against iOS re-firing OnEnter after backgrounding
-    if currentBase == "second" and not timedRunActive then return end
+    if currentBase == "second" and not runnerInTransit then return end
 
     currentBase = "second"
 
@@ -2699,21 +3273,22 @@ RUN TO THIRD!]],
 
 RUN TO THIRD!]],
             }),
-            Callback = function() advanceReason = "hit" beginTimedRun("third") end,
+            Callback = function() advanceReason = "hit" beginRunToBase("third") end,
         }
         return
     end
 
+    local short = getShortName(currentBatter)
     local msg = ""
     if advanceReason == "walk" then
         msg = pick({
-            [[You jog over to second as the batter takes first. No drama, just good lineup discipline. The winning run is in scoring position.
+            [[You jog over to second as ]] .. short .. [[ takes first. No drama, just good lineup discipline. The winning run is in scoring position.
 
 The infield shifts. The outfield backs up. The pressure is building.]],
             [[The walk forces you over to second. You settle onto the bag without breaking a sweat. Sometimes the easy ones matter most.
 
 You're in scoring position now. One good hit could send you home.]],
-            [[You trot over to second base as the batter jogs to first. The pitcher is fuming on the mound -- two baserunners now.
+            [[You trot over to second base as ]] .. short .. [[ jogs to first. The pitcher is fuming on the mound -- two baserunners now.
 
 Scoring position. The crowd can feel it.]],
         })
@@ -2757,19 +3332,22 @@ One good hit could send you home.]],
             [[You slide into second in a cloud of dust! The throw comes in from the outfield but it's too late. The umpire signals safe. Double!
 
 You're in scoring position. The crowd is electric.]],
-            [[You round first and cruise into second standing up! The outfielder is still retrieving the ball from the warning track. Double!
+            [[You put on the gas, cruising into second standing up! The outfielder is still retrieving the ball from the warning track. Double!
 
 Scoring position. The infield shifts nervously.]],
             [[You hit second base and pull up safely. The relay throw sails over the shortstop and into the dugout. Double!
 
 The crowd is on its feet. You're in scoring position.]],
+            [[You round first and tear into second standing up! In the stands, a fan leaps to celebrate, sending their souvenir ferryboat full of crab nachos sailing into the air. Double!
+
+You're in scoring position. The whole ballpark is losing its mind.]],
         })
     else
         msg = pick({
             [[You cruise into second as the ball is thrown back to the infield. Safe! The hit behind you moved you up perfectly.
 
 You're in scoring position now -- one good hit and you could be heading home. The crowd can almost taste the win.]],
-            [[You pull into second standing up. The throw goes to the cutoff man but there's no play on you. Your teammate did the job.
+            [[You pull into second standing up. The outfielder gets the ball back in, but too late to make a play. Your teammate did the job.
 
 Scoring position. The outfield backs up a step. The pressure is building.]],
             [[Safe at second! You touch the bag as the ball comes back to the infield. Your teammates are coming through.
@@ -2786,16 +3364,16 @@ end
 zoneThirdBase.OnEnter = function()
     if gameWon or gameLost then return end
 
-    if timedRunActive then
-        local inTime = checkTimedRun()
+    if runnerInTransit then
+        local inTime = isRunnerSafe("third")
         if not inTime then
-            handleRunnerOut("You were heading to third, but the throw was right on the money. The tag caught you on the leg. Out.")
+            handleRunnerOut(getRunnerOutMsg(advanceReason, "third"))
             return
         end
     end
 
     -- guard against iOS re-firing OnEnter after backgrounding
-    if currentBase == "third" and not timedRunActive then return end
+    if currentBase == "third" and not runnerInTransit then return end
 
     currentBase = "third"
 
@@ -2813,7 +3391,7 @@ RUN TO HOME!]],
 
 RUN TO HOME!]],
             }),
-            Callback = function() advanceReason = "hit" beginTimedRun("home") end,
+            Callback = function() advanceReason = "hit" beginRunToBase("home") end,
         }
         return
     end
@@ -2849,7 +3427,7 @@ Ninety feet. That's all that separates you from a walk-off win.]],
 Ninety feet from home. Every person in this stadium is standing.]],
             [[You take off the moment the ball gets past the catcher. Third base, just like that. A gift from the baseball gods.
 
-You look down the line toward home plate. Ninety feet. The noise builds with every heartbeat.]],
+You look down the line toward home plate. Ninety feet. One pitch could send you home.]],
             [[You scramble to third while the catcher chases the ball. By the time he picks it up, you're standing on the bag with a grin.
 
 Ninety feet from a walk-off win. The crowd can barely contain itself.]],
@@ -2858,7 +3436,7 @@ Ninety feet from a walk-off win. The crowd can barely contain itself.]],
         msg = pick({
             [[Safe at third! You stand on the bag and look down the line toward home plate. Ninety feet. That's all that separates you from a walk-off win.
 
-The crowd is on its feet. Every single person in this stadium is standing. You can feel your heart beating through your chest.]],
+The crowd is roaring now. You can feel your heart beating through your chest.]],
             [[You round the bag and hold at third. Safe! The throw goes through to the pitcher. You're ninety feet away.
 
 The crowd is deafening. Everyone in the stadium knows what comes next.]],
@@ -2874,18 +3452,18 @@ The stadium is shaking. The noise washes over you in waves.]],
 end
 
 cart.OnStart = function()
-    local seed = math.floor(47.656507 * 100000 + 122.348816 * 100000 + math.random(1, 99999))
+    local seed = math.floor(TUNNEL_LAT * 100000 + math.abs(TUNNEL_LON) * 100000 + math.random(1, 99999))
     math.randomseed(seed)
 
-    zoneDugout.Active = true
-    zoneDugout.Visible = true
-
     Wherigo.MessageBox{
-        Text = [[Welcome to T-Mobile Park!
+        Text = [[Eight and a half innings are in the books, and nobody has blinked.
 
-The roof is open tonight and 47,000 fans are on their feet. It is the bottom of the 9th, tied up against the Astros, and the energy in this place is electric. The crowd roars with every pitch, rally towels whipping through the summer air.
+The Mariners and Astros are tied in the bottom of the 9th. Houston has stranded runners. Seattle has scratched and clawed for every base. Now the crowd is thunderous, rally towels whipping through the air, and the whole night has narrowed to one last chance.
 
-Get to the dugout. Time for the show.]],
+From the train tracks to the waterfront, every fan in blue is on their feet.
+
+Head to the alley by the ballparks. Time for the show. ]],
+        Callback = function() activateZoneOrEnterIfInside(zoneTunnel) end,
     }
 end
 

@@ -28,13 +28,13 @@ Requires [wheriflo](https://test.pypi.org/project/wheriflo/):
 
 ```bash
 # Install and build
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==0.4.2 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Compile with Groundspeak (requires wherigo.com credentials)
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==0.4.2 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Test in web player
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==0.4.2 wheriflo play bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo play --watch bottom-of-the-9th/BottomOfThe9Th.lua
 ```
 
 Set credentials first:
