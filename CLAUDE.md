@@ -142,6 +142,16 @@ wheriflo build -> wheriflo compile -> wheriflo play
 - Field choice is session-locked. `resetGameState()` should not clear `selectedField`; restarts and play-again flows keep the same field and send the player back to that field's dugout.
 - Start copy should remain venue-agnostic until the tunnel choice. Win copy should respect `selectedField` so Kingdome runs do not mention T-Mobile Park.
 
+### End-of-game flow
+
+- After a win, `inputWinChoice` offers three branches: **Run it back** (same field, fresh lineup), **Switch ballparks** (flips `selectedField` + calls `setFieldCoordinates`, then restarts at the other field), and **Call it a night** (ends the session cleanly).
+- "Call it a night" calls `deactivateAllBaseZones()` so the player can walk around the park without re-triggering the dugout. This replaces the old pattern of leaving `zoneDugout.Active = true` post-game, which caused accidental restarts.
+- The replay affordance after "Call it a night" is the **Golden Trident** (`itemTrident`). It's granted on "Call it a night" (`Visible = true` + `MoveTo(Player)`) and shows a `Hoist the Golden Trident` command in the player's inventory.
+- Trident lifecycle mirrors Moose Magic / Pine Tar: **granted** when earned, **consumed on use** (`Visible = false` inside `cmdHoistTrident.OnClick`), **re-granted** on the next qualifying "Call it a night" win.
+- Hoisting opens `inputHoistChoice` with two options: **Run it back** or **Switch ballparks**. No "End" option here — the player chose to re-engage by tapping the trident, so the path is "pick a field and restart."
+- Loss flow (`inputRestart`) was intentionally not extended with switch-ballparks or trident; it still has its original three branches (`Try again same player` / `Return to player selection` / `End the cartridge`). Future revisit if desired.
+- **Known wheriflo simulator gap:** the simulator's item detail screen doesn't render the trident's `Hoist` command button (`cmdHoistTrident`). Filed as wheriflo issue #34. This is a simulator-side bug that does NOT affect Groundspeak-compiled cartridges; the trident still works correctly when played in an actual Wherigo client.
+
 ## Baserunning out chance (formerly "timed run")
 
 The cartridge has a baserunning out system that gives running between bases a low chance of failing — e.g., thrown out at first on an infield single, thrown out at home on a sac fly. The current implementation is in `isRunnerSafe(destination)` / `getRunnerOutBaseRate(reason, dest)` / `getRunnerOutMsg(reason, dest)`.
