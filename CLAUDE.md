@@ -4,7 +4,7 @@ This project is a Wherigo cartridge built with the `wheriflo` toolkit. The curre
 
 ## Wheriflo version and local services
 
-- Current pinned version as of 2026-05-27: `wheriflo==1.4.1`.
+- Current pinned version as of 2026-05-28: `wheriflo==2.0.5`.
 
 ### Files that pin the wheriflo version — update ALL of these on every bump
 
@@ -27,7 +27,7 @@ All hits should report the same version (excluding historical issue-writeup `.md
 If `uvx` reports "no version of wheriflo==X.Y.Z" right after a fresh TestPyPI release, retry with `--refresh` — the index cache lags behind the JSON metadata for a few minutes after publication.
 
 
-- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==1.4.1`:
+- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==2.0.5`:
   - `wheriflo play` supports `--watch` (opt in).
   - `wheriflo edit` watches **by default** (use `--no-watch` to opt out). Issue #26 was implemented in 1.0.5 — both servers detect external `.lua` mtime changes within ~3s and bump `/api/poll` generation in lockstep, so a live `edit` + `play --watch` pair stay synchronized.
 - Check the latest TestPyPI version with:

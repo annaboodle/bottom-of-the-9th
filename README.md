@@ -31,24 +31,24 @@ Requires [wheriflo](https://test.pypi.org/project/wheriflo/):
 
 ```bash
 # Install and build
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Validate the local GWC
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo validate bottom-of-the-9th/BottomOfThe9Th.gwc
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo validate bottom-of-the-9th/BottomOfThe9Th.gwc
 
 # Compile with Groundspeak (requires wherigo.com credentials)
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Test in web player with live reload
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo play --watch bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo play --watch bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Open the copy editor on port 8001 (watch mode is on by default)
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo edit --port 8001 bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo edit --port 8001 bottom-of-the-9th/BottomOfThe9Th.lua
 ```
 
 Set credentials first:
 ```bash
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==1.4.1 wheriflo credentials set
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo credentials set
 ```
 
 Before publishing, use the official compile step. Local `build`/`validate` can pass even when Groundspeak rejects a cartridge.

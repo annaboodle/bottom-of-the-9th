@@ -92,17 +92,15 @@ fieldCoordinates = {
 cart = Wherigo.ZCartridge()
 cart.Id = "675e0610-200c-4e0b-863c-9559d3b66969"
 cart.Name = "Bottom of the 9th"
-cart.Description = [[Tied with the Astros. The crowd is on its feet. One run wins it for the Mariners.
+cart.Description = [[A love letter to Mariners baseball.
 
-Step onto either Seattle diamond: the historic Kingdome of '95 or modern-day T-Mobile Park. You're one of the Mariners now, and we need you to bring this one home.
+You'll have the option of playing either of the two ballparks in this park, so if one diamond is in use, take the other. Game should take less than 30 minutes.
 
-The bases are real. You're up to bat.
-
-PLAY BALL!]]
+The cache is yours when the Mariners win.]]
 cart.Visible = true
 cart.Activity = "WherigoGame"
 cart.StartingLocation = ZonePoint(47.65962699180844, -122.36127338387956, 0)
-cart.StartingLocationDescription = [[Two baseball diamonds sit side by side in a Seattle park. Make your way to the alley between them to get this show on the road.]]
+cart.StartingLocationDescription = [[Two baseball diamonds sitting side by side in a Seattle park. Make your way to the alley between them to get this show on the road.]]
 cart.Version = "1.0"
 cart.Author = "-Bigfoot-"
 cart.Company = ""
