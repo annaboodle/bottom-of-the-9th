@@ -12,8 +12,6 @@ Every at-bat is pitch-by-pitch. You choose your swing approach, how big a lead t
 
 **Starting location:** The alley between the two diamonds near `47.6596, -122.3613`.
 
-**Final cache:** `N47° 39.574' W122° 21.686'`
-
 ## Features
 
 - **7 playable Mariners** with distinct stats (power, contact, bunting, speed, IQ) and hitting styles
@@ -31,24 +29,24 @@ Requires [wheriflo](https://test.pypi.org/project/wheriflo/):
 
 ```bash
 # Install and build
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo build bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Validate the local GWC
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo validate bottom-of-the-9th/BottomOfThe9Th.gwc
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo validate bottom-of-the-9th/BottomOfThe9Th.gwc
 
 # Compile with Groundspeak (requires wherigo.com credentials)
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo compile bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Test in web player with live reload
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo play --watch bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo play --watch bottom-of-the-9th/BottomOfThe9Th.lua
 
 # Open the copy editor on port 8001 (watch mode is on by default)
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo edit --port 8001 bottom-of-the-9th/BottomOfThe9Th.lua
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo edit --port 8001 bottom-of-the-9th/BottomOfThe9Th.lua
 ```
 
 Set credentials first:
 ```bash
-uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.0.5 wheriflo credentials set
+uvx --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ --from wheriflo==2.1.0 wheriflo credentials set
 ```
 
 Before publishing, use the official compile step. Local `build`/`validate` can pass even when Groundspeak rejects a cartridge.
@@ -66,4 +64,4 @@ bottom-of-the-9th/
 
 ## Author
 
-**-Bigfoot-** (detectivebigfoot on wherigo.com)
+**-Bigfoot-**

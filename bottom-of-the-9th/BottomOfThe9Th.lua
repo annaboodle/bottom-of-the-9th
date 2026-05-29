@@ -68,13 +68,13 @@ end
 
 TUNNEL_LAT = 47.65962699180844
 TUNNEL_LON = -122.36127338387956
-CACHE_LAT = 47.6595666667
-CACHE_LON = -122.3614333333
-FINAL_COORDS_TEXT = "N47\194\176 39.574' W122\194\176 21.686'"
+CACHE_LAT = 47.6595833333
+CACHE_LON = -122.3615333333
+FINAL_COORDS_TEXT = "N47\194\176 39.575' W122\194\176 21.692'"
 
 fieldCoordinates = {
     north = {
-        dugout = {47.659844226020226, -122.36171381181205},
+        dugout = {47.659868107984515, -122.36166015948181},
         home = {47.65988569573994, -122.3615683493037},
         first = {47.659752010965285, -122.3615683493037},
         second = {47.659761947007595, -122.3613564547926},
@@ -383,7 +383,7 @@ zoneSecondBase.ShowObjects = "OnEnter"
 zoneThirdBase = Wherigo.Zone(cart)
 zoneThirdBase.Id = "zone-third"
 zoneThirdBase.Name = "Third Base"
-zoneThirdBase.Description = "Third base is ninety feet from glory. Get there, and the whole ballpark will know what comes next."
+zoneThirdBase.Description = "Third base is ninety feet from glory. Get there, and one clean swing can bring the house down."
 zoneThirdBase.Visible = false
 zoneThirdBase.Active = false
 zoneThirdBase.OriginalPoint = ZonePoint(47.656344, -122.348810, 0)
@@ -398,8 +398,8 @@ zoneCache.Name = "Victory Hall / Final Cache"
 zoneCache.Description = "Where the Mariners gather after a walk-off win. Humpy's coordinates led you here. The boys are waiting."
 zoneCache.Visible = false
 zoneCache.Active = false
-zoneCache.OriginalPoint = ZonePoint(47.6595666667, -122.3614333333, 0)
-zoneCache.Points = makeZonePoints(47.6595666667, -122.3614333333, 4)
+zoneCache.OriginalPoint = ZonePoint(47.6595833333, -122.3615333333, 0)
+zoneCache.Points = makeZonePoints(47.6595833333, -122.3615333333, 4)
 zoneCache.DistanceRange = Distance(-1, "feet")
 zoneCache.ProximityRange = Distance(30, "meters")
 zoneCache.ShowObjects = "OnEnter"
@@ -443,12 +443,12 @@ function activateZone(zone)
 end
 
 function activateZoneOrEnterIfInside(zone)
+    activateZone(zone)
+
     if isPlayerInsideZone(zone) and zone.OnEnter then
         zone.Active = false
         zone.Visible = false
         zone.OnEnter()
-    else
-        activateZone(zone)
     end
 end
 
@@ -467,28 +467,24 @@ itemRallyCap.Id = "item-rallycap"
 itemRallyCap.Name = "Rally Cap"
 itemRallyCap.Description = "A backwards, inside-out cap that channels pure comeback energy. When everything goes wrong, flip the vibes and try again."
 itemRallyCap.Visible = false
-itemRallyCap.Commands = {}
 
 itemPineTarRag = Wherigo.ZItem(cart)
 itemPineTarRag.Id = "item-pinetar"
 itemPineTarRag.Name = "Pine Tar Rag"
 itemPineTarRag.Description = "A sticky, dark rag that gives you a better grip on the bat. The ball jumps a little harder off the barrel."
 itemPineTarRag.Visible = false
-itemPineTarRag.Commands = {}
 
 itemScoutingReport = Wherigo.ZItem(cart)
 itemScoutingReport.Id = "item-scouting"
 itemScoutingReport.Name = "Scouting Report"
 itemScoutingReport.Description = "A crumpled page of notes from the advance scout. Pitch tendencies, catcher release times, and fielder positioning -- everything you need to make the right call."
 itemScoutingReport.Visible = false
-itemScoutingReport.Commands = {}
 
 itemMooseMagic = Wherigo.ZItem(cart)
 itemMooseMagic.Id = "item-moose"
 itemMooseMagic.Name = "Moose Magic"
 itemMooseMagic.Description = "When the Mariner Moose appears on the dugout rail, strange things happen. Players run faster, see the ball better, and the whole team catches fire."
 itemMooseMagic.Visible = false
-itemMooseMagic.Commands = {}
 
 itemBubblegumWrapper = Wherigo.ZItem(cart)
 itemBubblegumWrapper.Id = "item-wrapper"
@@ -498,25 +494,35 @@ itemBubblegumWrapper.Description = [[A flattened bubblegum wrapper from Humpy. T
 
 Wherever they lead, that's where the boys will be. Maybe the cache, too...]]
 itemBubblegumWrapper.Visible = false
-itemBubblegumWrapper.Commands = {}
 
 itemCartridgeCode = Wherigo.ZItem(cart)
 itemCartridgeCode.Id = "item-code"
 itemCartridgeCode.Name = "Game-Winning Ball"
 itemCartridgeCode.Description = "The game-winning ball from your walk-off hit. The cartridge code is carefully printed under the stitching."
 itemCartridgeCode.Visible = false
-itemCartridgeCode.Commands = {}
 
+itemTrident = Wherigo.ZItem(cart)
+itemTrident.Id = "item-trident"
+itemTrident.Name = "Golden Trident"
+itemTrident.Description = "The Mariners' golden trident, raised in the dugout after every home win. Hoist it any time to start a new game."
+itemTrident.Visible = false
 -- Golden Trident: end-of-night affordance. Player taps this in their inventory to start
 -- a new game on their own terms instead of relying on a perpetually-active dugout zone.
 -- Granted on the "Call it a night" win branch, consumed on hoist (Visible = false),
 -- re-granted on the next qualifying win. Same lifecycle as Moose Magic / Pine Tar.
-cmdHoistTrident = Wherigo.ZCommand()
-cmdHoistTrident.Id = "cmd-hoist-trident"
-cmdHoistTrident.Text = "Hoist the Golden Trident"
-cmdHoistTrident.CmdWith = "Nothing"
-cmdHoistTrident.EmptyTargetText = ""
-cmdHoistTrident.OnClick = function()
+itemTrident.Commands = {
+    cmdHoistTrident = Wherigo.ZCommand{
+        Text = "Hoist the Golden Trident",
+        CmdWith = false,
+        Enabled = true,
+        EmptyTargetListText = "Nothing available",
+    }
+}
+itemTrident.Commands.cmdHoistTrident.Custom = true
+itemTrident.Commands.cmdHoistTrident.Id = "cmd-hoist-trident"
+itemTrident.Commands.cmdHoistTrident.WorksWithAll = true
+
+function itemTrident:OncmdHoistTrident(target)
     itemTrident.Visible = false
     Wherigo.MessageBox{
         Text = [[You hoist the Golden Trident high. The dugout lights flicker on. The scoreboard resets.
@@ -525,13 +531,6 @@ Time to do this again.]],
         Callback = function() Wherigo.GetInput(inputHoistChoice) end,
     }
 end
-
-itemTrident = Wherigo.ZItem(cart)
-itemTrident.Id = "item-trident"
-itemTrident.Name = "Golden Trident"
-itemTrident.Description = "The Mariners' golden trident, raised in the dugout after every home win. Hoist it any time to start a new game."
-itemTrident.Visible = false
-itemTrident.Commands = {cmdHoistTrident}
 
 inputHoistChoice = Wherigo.ZInput(cart)
 inputHoistChoice.Id = "input-hoist-choice"
@@ -2441,18 +2440,16 @@ You flatten out the wrapper to reveal the following:
 You tuck the wrapper into your pocket and pat it twice. That one's coming home with you.]]
 end
 
-function getCartridgeCodeDescription(code, shortCode)
+function getCartridgeCodeDescription(shortCode)
     return [[The game-winning ball from your walk-off hit. The cartridge code is carefully printed under the stitching:
-]] .. code .. [[
-
-(If the full code above is rejected on Wherigo.com, try entering just the first 15 characters: ]] .. shortCode .. [[.)]]
+]] .. shortCode
 end
 
-function getCompletionCodeText(code)
+function getCompletionCodeText(shortCode)
     return [[As the celebrations continue, ]] .. getSkipperName() .. [[ yells, "Heads up!", tossing the game-winning ball over the crowd to you.
 
 Catching it, you smile, and turn it over to see a cartridge code carefully printed under the stitching:
-]] .. code .. [[
+]] .. shortCode .. [[
 
 You grip the ball a little tighter.
 
@@ -2469,9 +2466,9 @@ function showCompletionCodeMessage()
         cart.Complete = true
         local code = Player.CompletionCode or "(code unavailable)"
         local shortCode = string.sub(code, 1, 15)
-        itemCartridgeCode.Description = getCartridgeCodeDescription(code, shortCode)
+        itemCartridgeCode.Description = getCartridgeCodeDescription(shortCode)
         Wherigo.MessageBox{
-            Text = getCompletionCodeText(code),
+            Text = getCompletionCodeText(shortCode),
             Callback = function()
                 Wherigo.GetInput(inputWinChoice)
             end,

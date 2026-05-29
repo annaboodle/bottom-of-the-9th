@@ -4,7 +4,7 @@ This project is a Wherigo cartridge built with the `wheriflo` toolkit. The curre
 
 ## Wheriflo version and local services
 
-- Current pinned version as of 2026-05-28: `wheriflo==2.0.5`.
+- Current pinned version as of 2026-05-28: `wheriflo==2.1.0`.
 
 ### Files that pin the wheriflo version — update ALL of these on every bump
 
@@ -27,7 +27,7 @@ All hits should report the same version (excluding historical issue-writeup `.md
 If `uvx` reports "no version of wheriflo==X.Y.Z" right after a fresh TestPyPI release, retry with `--refresh` — the index cache lags behind the JSON metadata for a few minutes after publication.
 
 
-- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==2.0.5`:
+- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==2.1.0`:
   - `wheriflo play` supports `--watch` (opt in).
   - `wheriflo edit` watches **by default** (use `--no-watch` to opt out). Issue #26 was implemented in 1.0.5 — both servers detect external `.lua` mtime changes within ~3s and bump `/api/poll` generation in lockstep, so a live `edit` + `play --watch` pair stay synchronized.
 - Check the latest TestPyPI version with:
@@ -93,14 +93,16 @@ Relevant wheriflo issues created or updated:
 - `#29` - **Filed 2026-05-26**: bug — copy editor `function_context` attribution ignores anonymous-function containers (zone OnEnter, callbacks). Discrete parser issue. Headline repro: 4 sibling variant blocks inside `zoneSecondBase.OnEnter` (anonymous function at line 2956) attributed to two different first-base named functions (`awardFirstBaseItem`, `startFirstBaseTrivia`) — even worse, inconsistent across siblings. Secondary repro on the lead-size case (line 1210 attributed to `offerMooseMagic` instead of `showPitchPrompt`). Fallback to last-seen named-function declaration is the root cause; fix should recognize anon-function assignments to table fields as new context.
 - `#30` - **Filed 2026-05-26**: player bug — opening Map and clicking **Go Here** triggers the zone message/input panel behind the Leaflet map instead of above it. Looks like a stacking-context / z-index issue between the map container and the modal overlay.
 - `#31` - **Filed 2026-05-27**: player/runtime bug — when a zone becomes active while the player is already inside it, the app can show "inside zone" but not fire `OnEnter` until the player leaves and re-enters. Repros: restart while standing in the dugout; start cartridge while already standing in the tunnel/alley. Requested either auto-triggering `OnEnter` on activation if already inside, or an official documented helper/pattern.
+  - **Live iOS follow-up 2026-05-28:** still reproducible when Home Plate activates while the player is already inside it. The first cartridge workaround checked containment before activation; that failed on iOS. Updated helper now activates the zone first, then checks `zone:Contains(...)` and manually calls `OnEnter` if already inside. Comment posted on #31.
+  - **Live iOS validation 2026-05-28:** the revised activate-first helper worked in the field. When Home Plate became active while the player was already inside/near the zone, the normal Home Plate flow triggered without requiring the player to leave and re-enter.
 - `#32` - **Filed 2026-05-27**: builder-ergonomics feature request — surface the `Player.CompletionCode` pattern via three complementary shapes: (1) lint warning when a cartridge sets neither `cart.Complete = true` nor references `Player.CompletionCode`, (2) docs section explaining the canonical pattern + the per-player-per-download nature of codes + the wherigo.com upload-and-redownload testing flow, (3) starter template with a stub `showCompletion()` function. Filed after our cartridge nearly shipped with an `XXX` placeholder in the win MessageBox because the trap is non-obvious.
 - `#33` - **Filed 2026-05-27**: player simulator feature request — map/location list should allow inspecting active location descriptions without teleporting. Real Wherigo lets players tap a location they are not at to see its title/description/distance; wheriflo currently only exposes a **Go Here** teleport action.
-- `#34` - **Filed 2026-05-27**: player simulator bug/feature request — visible inventory items with enabled `ZCommand`s should render action buttons on the item detail screen. Repro: Golden Trident has `itemTrident.Commands = {cmdHoistTrident}` and `cmdHoistTrident.OnClick`, but the simulator item detail only shows name/description and no `Hoist the Golden Trident` button.
+- `#34` - **Filed 2026-05-27**: item command simulator/client parity. Original report: simulator item detail did not render `ZCommand` action buttons. In `wheriflo==2.1.0` the simulator renders and fires the Golden Trident command, but a live iOS Wherigo test showed `cmdHoistTrident.OnClick` did not work. **Confirmed fixed in our cartridge on iOS 2026-05-28** by switching to the canonical named command shape (`item.Commands.cmdHoistTrident` + `function itemTrident:OncmdHoistTrident(target)`). Follow-up comment posted asking wheriflo to model/support/lint toward this real-client-compatible pattern.
 - `#35` - **Filed 2026-05-27**: lint/build should flag `ZCommand.Enabled = true` because it makes official Groundspeak compile fail with HTTP 500 even though local build/validate pass.
 
 Compile finding from 2026-05-27:
 
-- Official Groundspeak compile fails with HTTP 500 if a `ZCommand` sets `Enabled = true`. Commands compile when attached to an item with `Text`, `CmdWith`, `EmptyTargetText`, and `OnClick`; do not set `cmd.Enabled` unless wheriflo/Groundspeak support is confirmed.
+- Official Groundspeak compile has previously failed with HTTP 500 when a standalone `ZCommand` set `Enabled = true`; if a compile fails after command changes, retry without `Enabled` before changing behavior. For item commands, prefer the canonical builder/Urwigo-style shape: `item.Commands = { cmdName = Wherigo.ZCommand{...} }`, set `Text`, `CmdWith = false`, `EmptyTargetListText`, `Custom = true`, and `WorksWithAll = true`, then put behavior in `function item:OncmdName(target) ... end`. Do not rely on `cmd.OnClick` for real iOS/Garmin parity.
 
 Specific observations:
 
@@ -132,7 +134,8 @@ wheriflo build -> wheriflo compile -> wheriflo play
 
 - The copy editor is for text review/editing; if it changes cartridge source, verify before overwriting or reverting anything.
 - Apostrophes are okay inside Lua strings, especially double-quoted strings. The apostrophe restriction only applies to Lua comments in this project, so do not over-sanitize natural copy contractions.
-- When enabling a destination zone after a message/input callback, use `activateZoneOrEnterIfInside(...)` instead of directly setting `Active`/`Visible`. This preserves the normal arrival flow when the player is already standing inside the zone at the moment it becomes active.
+- Do not put final cache coordinates in public docs, especially `README.md`. The coordinates can live in cartridge source and player-facing victory/item copy where gameplay reveals them, but not in documentation that someone can read before playing.
+- When enabling a destination zone after a message/input callback, use `activateZoneOrEnterIfInside(...)` instead of directly setting `Active`/`Visible`. This preserves the normal arrival flow when the player is already standing inside the zone at the moment it becomes active. The helper intentionally activates the zone before checking containment because the iOS app may not report `zone:Contains(...)` accurately for inactive zones. This activate-first pattern was validated in a real iOS field test on 2026-05-28.
 
 ### Field selection flow
 
@@ -147,10 +150,11 @@ wheriflo build -> wheriflo compile -> wheriflo play
 - After a win, `inputWinChoice` offers three branches: **Run it back** (same field, fresh lineup), **Switch ballparks** (flips `selectedField` + calls `setFieldCoordinates`, then restarts at the other field), and **Call it a night** (ends the session cleanly).
 - "Call it a night" calls `deactivateAllBaseZones()` so the player can walk around the park without re-triggering the dugout. This replaces the old pattern of leaving `zoneDugout.Active = true` post-game, which caused accidental restarts.
 - The replay affordance after "Call it a night" is the **Golden Trident** (`itemTrident`). It's granted on "Call it a night" (`Visible = true` + `MoveTo(Player)`) and shows a `Hoist the Golden Trident` command in the player's inventory.
-- Trident lifecycle mirrors Moose Magic / Pine Tar: **granted** when earned, **consumed on use** (`Visible = false` inside `cmdHoistTrident.OnClick`), **re-granted** on the next qualifying "Call it a night" win.
+- Trident lifecycle mirrors Moose Magic / Pine Tar: **granted** when earned, **consumed on use** (`Visible = false` inside `itemTrident:OncmdHoistTrident(...)`), **re-granted** on the next qualifying "Call it a night" win.
 - Hoisting opens `inputHoistChoice` with two options: **Run it back** or **Switch ballparks**. No "End" option here — the player chose to re-engage by tapping the trident, so the path is "pick a field and restart."
 - Loss flow (`inputRestart`) was intentionally not extended with switch-ballparks or trident; it still has its original three branches (`Try again same player` / `Return to player selection` / `End the cartridge`). Future revisit if desired.
-- **Known wheriflo simulator gap:** the simulator's item detail screen doesn't render the trident's `Hoist` command button (`cmdHoistTrident`). Filed as wheriflo issue #34. This is a simulator-side bug that does NOT affect Groundspeak-compiled cartridges; the trident still works correctly when played in an actual Wherigo client.
+- **Live iOS finding from 2026-05-28:** item command events are validated on the actual Wherigo iOS app when they use canonical builder-style wiring. `cmd.OnClick` did not fire on iOS, even though it worked in the wheriflo simulator. The working shape is a named command table entry (`item.Commands.cmdHoistTrident = Wherigo.ZCommand{...}`) plus an item method handler (`function itemTrident:OncmdHoistTrident(target) ... end`). iOS displayed the custom `Hoist the Golden Trident` button and ran the restart flow successfully. Use this pattern for all future actionable inventory items.
+- Passive inventory items currently leave `Commands` unset instead of assigning `Commands = {}`. Live iOS testing on 2026-05-28 confirmed this did not hide the generic `Start` button on non-action items; the button appears to be official iOS app chrome/fallback behavior. Leave as-is for now because it is a minor UX oddity and not game-breaking.
 
 ## Baserunning out chance (formerly "timed run")
 
