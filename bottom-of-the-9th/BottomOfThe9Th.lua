@@ -620,17 +620,53 @@ inputWinChoice.Text = [[What now? Down for another game, or ready to meet the bo
 If you call it a night, you'll find the golden trident in your bag. Hoist it any time to play again.]]
 inputWinChoice.Choices = {"Run it back", "Switch ballparks", "Call it a night"}
 
-inputFieldSelect = Wherigo.ZInput(cart)
-inputFieldSelect.Id = "input-field-select"
-inputFieldSelect.InputType = "MultipleChoice"
-inputFieldSelect.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
+inputLocationCheck = Wherigo.ZInput(cart)
+inputLocationCheck.Id = "input-location-check"
+inputLocationCheck.InputType = "Text"
+inputLocationCheck.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
 
 A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.
 
-"Quick call, kid," he says, slathering cream cheese on a bun. "North diamond is the Kingdome, '95 ALDS energy. South diamond is T-Mobile Park, summer of right now. Where do you want to write your legend?"
+"Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
+
+What's written on the disk?]]
+
+inputFieldSelect = Wherigo.ZInput(cart)
+inputFieldSelect.Id = "input-field-select"
+inputFieldSelect.InputType = "MultipleChoice"
+inputFieldSelect.Text = [["Here ya go, breakfast of champions," he says, tossing you a foil-wrapped dog.
+
+"Now that you're fueled up, let's get down to business. North diamond is the Kingdome, '95 ALDS energy. South diamond is T-Mobile Park, summer of right now. Where do you want to write your legend?"
 
 Which ballpark are you headed to?]]
 inputFieldSelect.Choices = {"Kingdome (north field)", "T-Mobile Park (south field)"}
+
+function normalizeLocationAnswer(answer)
+    local normalized = string.upper(answer or "")
+    normalized = string.gsub(normalized, "[%p%c]", " ")
+    normalized = string.gsub(normalized, "%s+", " ")
+    normalized = string.gsub(normalized, "^%s+", "")
+    normalized = string.gsub(normalized, "%s+$", "")
+    return normalized
+end
+
+function isCorrectLocationAnswer(answer)
+    local normalized = normalizeLocationAnswer(answer)
+    return string.find(normalized, "PARK%s+DEPT") ~= nil
+end
+
+inputLocationCheck.OnGetInput = function(input, answer)
+    if isCorrectLocationAnswer(answer) then
+        Wherigo.GetInput(inputFieldSelect)
+        return
+    end
+
+    inputLocationCheck.Text = [[The hot dog vendor shakes his head, casually rotating the roasting meats. "That's not it, old sport. Try again?"
+
+What's written on the disk?]]
+    Wherigo.GetInput(inputLocationCheck)
+end
+
 inputFieldSelect.OnGetInput = function(input, answer)
     local field = "south"
     local ack = [[The man grins in approval. "T-Mobile Park. Real grass, retractable roof open wide, summer sky going pink. Get to the dugout -- let's give Seattle something to remember."]]
@@ -2978,7 +3014,14 @@ end
 
 zoneTunnel.OnEnter = function()
     if selectedField ~= "" then return end
-    Wherigo.GetInput(inputFieldSelect)
+    inputLocationCheck.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
+
+A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.
+
+"Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
+
+What's written on the disk?]]
+    Wherigo.GetInput(inputLocationCheck)
 end
 
 zoneDugout.OnEnter = function()

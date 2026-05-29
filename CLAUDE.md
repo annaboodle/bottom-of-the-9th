@@ -4,7 +4,7 @@ This project is a Wherigo cartridge built with the `wheriflo` toolkit. The curre
 
 ## Wheriflo version and local services
 
-- Current pinned version as of 2026-05-28: `wheriflo==2.1.0`.
+- Current pinned version as of 2026-05-29: `wheriflo==2.1.5`.
 
 ### Files that pin the wheriflo version — update ALL of these on every bump
 
@@ -27,7 +27,7 @@ All hits should report the same version (excluding historical issue-writeup `.md
 If `uvx` reports "no version of wheriflo==X.Y.Z" right after a fresh TestPyPI release, retry with `--refresh` — the index cache lags behind the JSON metadata for a few minutes after publication.
 
 
-- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==2.1.0`:
+- Always start wheriflo services in watch mode so browser tools update after cartridge edits. As of `wheriflo==2.1.5`:
   - `wheriflo play` supports `--watch` (opt in).
   - `wheriflo edit` watches **by default** (use `--no-watch` to opt out). Issue #26 was implemented in 1.0.5 — both servers detect external `.lua` mtime changes within ~3s and bump `/api/poll` generation in lockstep, so a live `edit` + `play --watch` pair stay synchronized.
 - Check the latest TestPyPI version with:
@@ -99,6 +99,9 @@ Relevant wheriflo issues created or updated:
 - `#33` - **Filed 2026-05-27**: player simulator feature request — map/location list should allow inspecting active location descriptions without teleporting. Real Wherigo lets players tap a location they are not at to see its title/description/distance; wheriflo currently only exposes a **Go Here** teleport action.
 - `#34` - **Filed 2026-05-27**: item command simulator/client parity. Original report: simulator item detail did not render `ZCommand` action buttons. In `wheriflo==2.1.0` the simulator renders and fires the Golden Trident command, but a live iOS Wherigo test showed `cmdHoistTrident.OnClick` did not work. **Confirmed fixed in our cartridge on iOS 2026-05-28** by switching to the canonical named command shape (`item.Commands.cmdHoistTrident` + `function itemTrident:OncmdHoistTrident(target)`). Follow-up comment posted asking wheriflo to model/support/lint toward this real-client-compatible pattern.
 - `#35` - **Filed 2026-05-27**: lint/build should flag `ZCommand.Enabled = true` because it makes official Groundspeak compile fail with HTTP 500 even though local build/validate pass.
+- `#36` - **Filed 2026-05-29 / fixed in `wheriflo==2.1.3`**: player simulator bug — free-text `ZInput` (`InputType = "Text"`) originally displayed the prompt but rendered no text field or submit button. `2.1.3` added `/api/answer_text`, a web-player text field + Submit button, Enter-key submit, and fallback text input when choices are empty. `2.1.5` added the iOS caveat that answer checks should use `string.find(...)`, not exact equality.
+- `#37` - **Filed 2026-05-29 / docs landed in `wheriflo==2.1.4`**: docs/design-guide request — recommend optional early on-location verification prompts for geocache-style cartridges that should discourage simulator-only play. Pattern: ask one friendly, diegetic question about a stable physical detail near the starting location; normalize answers; provide retries.
+- `#38` - **Filed 2026-05-29**: docs/troubleshooting request — `uvx ... wheriflo compile` can fail in sandboxed agent environments when `uv` cannot access its default cache under `~/.cache/uv` (`Operation not permitted`). Build/validate may pass and the official compile can still succeed when rerun outside the sandbox, so document a local cache workaround such as `UV_CACHE_DIR=.uv-cache` or `/tmp/uv-cache` and make clear this is not necessarily a cartridge/Groundspeak failure.
 
 Compile finding from 2026-05-27:
 
@@ -135,6 +138,8 @@ wheriflo build -> wheriflo compile -> wheriflo play
 - The copy editor is for text review/editing; if it changes cartridge source, verify before overwriting or reverting anything.
 - Apostrophes are okay inside Lua strings, especially double-quoted strings. The apostrophe restriction only applies to Lua comments in this project, so do not over-sanitize natural copy contractions.
 - Do not put final cache coordinates in public docs, especially `README.md`. The coordinates can live in cartridge source and player-facing victory/item copy where gameplay reveals them, but not in documentation that someone can read before playing.
+- For anti-simulator protection, prefer an early on-location verification question that can only be answered by physically visiting the starting area. Keep it diegetic and low-friction; this cartridge uses the hot dog vendor asking what is written on the metal disk at the player's feet before ballpark selection.
+- For free-text `ZInput` answers on iOS, do not rely on exact equality (`==`) even after normalization. `wheriflo==2.1.5` documents a real iOS gotcha: the Wherigo app may append invisible trailing characters to text answers. Use `string.find(...)` against the normalized text instead.
 - When enabling a destination zone after a message/input callback, use `activateZoneOrEnterIfInside(...)` instead of directly setting `Active`/`Visible`. This preserves the normal arrival flow when the player is already standing inside the zone at the moment it becomes active. The helper intentionally activates the zone before checking containment because the iOS app may not report `zone:Contains(...)` accurately for inactive zones. This activate-first pattern was validated in a real iOS field test on 2026-05-28.
 
 ### Field selection flow
