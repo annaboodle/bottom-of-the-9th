@@ -623,11 +623,7 @@ inputWinChoice.Choices = {"Run it back", "Switch ballparks", "Call it a night"}
 inputLocationCheck = Wherigo.ZInput(cart)
 inputLocationCheck.Id = "input-location-check"
 inputLocationCheck.InputType = "Text"
-inputLocationCheck.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
-
-A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.
-
-"Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
+inputLocationCheck.Text = [["Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
 
 What's written on the disk?]]
 
@@ -641,22 +637,19 @@ inputFieldSelect.Text = [["Here ya go, breakfast of champions," he says, tossing
 Which ballpark are you headed to?]]
 inputFieldSelect.Choices = {"Kingdome (north field)", "T-Mobile Park (south field)"}
 
-function normalizeLocationAnswer(answer)
-    local normalized = string.upper(answer or "")
-    normalized = string.gsub(normalized, "[%p%c]", " ")
-    normalized = string.gsub(normalized, "%s+", " ")
-    normalized = string.gsub(normalized, "^%s+", "")
-    normalized = string.gsub(normalized, "%s+$", "")
-    return normalized
-end
-
-function isCorrectLocationAnswer(answer)
-    local normalized = normalizeLocationAnswer(answer)
-    return string.find(normalized, "PARK%s+DEPT") ~= nil
-end
-
 inputLocationCheck.OnGetInput = function(input, answer)
-    if isCorrectLocationAnswer(answer) then
+    if answer == "park dept"
+        or answer == "PARK DEPT"
+        or answer == "Park Dept"
+        or answer == "Park dept"
+        or answer == "park Dept"
+        or answer == "PARK Dept"
+        or answer == "Park DEPT"
+        or answer == "park DEPT"
+        or answer == "PARK dept"
+        or answer == "parkdept"
+        or answer == "PARKDEPT"
+        or answer == "ParkDept" then
         Wherigo.GetInput(inputFieldSelect)
         return
     end
@@ -3014,14 +3007,17 @@ end
 
 zoneTunnel.OnEnter = function()
     if selectedField ~= "" then return end
-    inputLocationCheck.Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
-
-A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.
-
-"Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
+    inputLocationCheck.Text = [["Quick question for you, kid," he says, slathering cream cheese on a bun. "You see that round metal disk at your feet? If you tell me what's written on it, I've got a Seattle dog with your name on it. On the house."
 
 What's written on the disk?]]
-    Wherigo.GetInput(inputLocationCheck)
+    Wherigo.MessageBox{
+        Text = [[You hurry down the alley between two baseball stadiums, cleats clicking on the asphalt. Beyond the fences, the crowd is roaring. Tie game. They need you now.
+
+A hot dog vendor in a faded Mariners jacket waves you over. The tantalizing smell of caramelized onions cuts through the summer air.]],
+        Callback = function()
+            Wherigo.GetInput(inputLocationCheck)
+        end,
+    }
 end
 
 zoneDugout.OnEnter = function()
